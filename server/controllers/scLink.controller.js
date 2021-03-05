@@ -116,8 +116,6 @@ module.exports = {
         }
         const { course, students } = req.body
         const insertData = []
-
-        // console.log(students)
         students.forEach((element) => {
             insertData.push({ course, student: element })
         })
