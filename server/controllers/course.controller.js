@@ -1,5 +1,4 @@
-const db = require('../models')
-const Course = db.courses
+const { Course } = require('../models')
 
 module.exports = {
     create: async(req, res) => {
@@ -73,7 +72,13 @@ module.exports = {
         }
 
         const id = req.params.id
-        Course.findByIdAndUpdate(id, req.body, {
+        let newData = {
+            cno: req.body.cno,
+            courseName: req.body.courseName,
+            year: req.body.year,
+            teacher: req.body.teacher,
+        }
+        Course.findByIdAndUpdate(id, newData, {
                 useFindAndModify: false,
             })
             .then((data) => {

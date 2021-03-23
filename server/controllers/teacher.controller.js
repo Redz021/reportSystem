@@ -1,5 +1,4 @@
-const db = require('../models')
-const Teacher = db.teachers
+const { Teacher } = require('../models')
 
 module.exports = {
     create: async(req, res) => {
@@ -75,7 +74,12 @@ module.exports = {
         }
 
         const id = req.params.id
-        Teacher.findByIdAndUpdate(id, req.body, {
+        const newData = {
+            tno: req.body.tno,
+            teacherName: req.body.teacherName,
+            password: req.body.password,
+        }
+        Teacher.findByIdAndUpdate(id, newData, {
                 useFindAndModify: false,
             })
             .then((data) => {

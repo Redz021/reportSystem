@@ -5,7 +5,7 @@ const config = require('./config')
 const app = express()
 
 let corsOptions = {
-    origin: 'http://localhost:8080',
+    origin: ['http://localhost:8080', 'http://127.0.0.1:5500'],
 }
 
 app.use(cors(corsOptions))
@@ -25,6 +25,7 @@ db.mongoose
         console.log('数据库连接失败', err)
         process.exit()
     })
+require('./routers/login.router')(app)
 require('./routers/student.router')(app)
 require('./routers/teacher.router')(app)
 require('./routers/course.router')(app)

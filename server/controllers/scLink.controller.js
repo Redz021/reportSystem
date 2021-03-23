@@ -1,5 +1,4 @@
-const db = require('../models')
-const ScLink = db.scLink
+const { ScLink } = require('../models')
 
 module.exports = {
     create: async(req, res) => {

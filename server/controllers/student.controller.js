@@ -1,5 +1,4 @@
-const db = require('../models')
-const Student = db.students
+const { Student } = require('../models')
 
 module.exports = {
     create: async(req, res) => {
@@ -76,7 +75,13 @@ module.exports = {
         }
 
         const id = req.params.id
-        Student.findByIdAndUpdate(id, req.body, {
+        const newData = {
+            sno: req.body.sno,
+            studentName: req.body.studentName,
+            password: req.body.password,
+            studentClass: req.body.studentClass,
+        }
+        Student.findByIdAndUpdate(id, newData, {
                 useFindAndModify: false,
             })
             .then((data) => {
