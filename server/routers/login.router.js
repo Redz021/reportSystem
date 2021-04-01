@@ -3,7 +3,7 @@ module.exports = (app) => {
     const db = require(`../models/`)
     let router = require('express').Router()
     router.post('/login', loginController.login)
-
+    router.post('/logout', loginController.logout)
     app.use('/', router)
     app.use(
         '/api/:resource',

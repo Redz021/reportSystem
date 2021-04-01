@@ -16,6 +16,7 @@ module.exports = {
                 studentName: stuData.studentName,
                 password: stuData.password,
                 studentClass: stuData.studentClass,
+                _lastlogout: new Date().getTime(),
             })
             student
                 .save(student)
@@ -92,6 +93,7 @@ module.exports = {
                 } else {
                     res.json({
                         message: '更新成功',
+                        student: data,
                     })
                 }
             })

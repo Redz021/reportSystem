@@ -7,6 +7,7 @@ module.exports = (mongoose) => {
         },
         teacherName: String,
         password: String,
+        _lastlogout: Number,
     }, {
         timestamps: true,
     })

@@ -1,0 +1,11 @@
+<template>
+  <div>
+    <h1>教师页</h1>
+    <div>内容</div>
+  </div>
+</template>
+<script>
+export default {};
+</script>
+<style scoped>
+</style>

@@ -15,6 +15,7 @@ module.exports = {
                 tno: teaData.tno,
                 teacherName: teaData.teacherName,
                 password: teaData.password,
+                _lastlogout: new Date().getTime(),
             })
             teacher
                 .save(teacher)
