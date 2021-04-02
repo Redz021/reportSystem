@@ -23,7 +23,7 @@ module.exports = {
             )
             return res.send({ type: 1, user, token })
         }
-        res.send({ code: -1, msg: '用户不存在' })
+        res.send({ code: -1, msg: '用户不存在或密码错误' })
     },
     logout: async(req, res) => {
         const { id, type } = req.body
