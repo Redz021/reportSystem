@@ -35,6 +35,7 @@ module.exports = {
                 teacher,
             } :
             {}
+        console.log(condition)
         Course.find(condition)
             .then((data) => {
                 res.json(data)

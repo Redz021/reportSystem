@@ -29,26 +29,26 @@ module.exports = {
             res.json({ msg: '用户已存在' })
         }
     },
-    // findAll: (req, res) => {
-    //     const tno = req.query.tno
-    //     let condition = tno ?
-    //         {
-    //             tno: {
-    //                 $regex: new RegExp(tno),
-    //                 $options: 'i',
-    //             },
-    //         } :
-    //         {}
-    //     Teacher.find(condition)
-    //         .then((data) => {
-    //             res.json(data)
-    //         })
-    //         .catch((err) => {
-    //             res.status(500).json({
-    //                 msg: err || '查找失败',
-    //             })
-    //         })
-    // },
+    findAll: (req, res) => {
+        const tno = req.query.tno
+        let condition = tno ?
+            {
+                tno: {
+                    $regex: new RegExp(tno),
+                    $options: 'i',
+                },
+            } :
+            {}
+        Teacher.find(condition)
+            .then((data) => {
+                res.json(data)
+            })
+            .catch((err) => {
+                res.status(500).json({
+                    msg: err || '查找失败',
+                })
+            })
+    },
     findOne: (req, res) => {
         const id = req.params.id
         Teacher.findById(id)

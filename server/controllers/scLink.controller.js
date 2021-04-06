@@ -27,7 +27,7 @@ module.exports = {
         }
     },
     getCourses: (req, res) => {
-        const student = req.params.sno
+        const student = req.params.sid
         ScLink.find({ student })
             .populate({ path: 'course' })
             .then((data) => {
@@ -50,7 +50,7 @@ module.exports = {
             })
     },
     getStudents: (req, res) => {
-        const course = req.params.cno
+        const course = req.params.cid
         ScLink.find({ course })
             .populate({ path: 'student' })
             .then((data) => {

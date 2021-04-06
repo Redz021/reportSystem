@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
+import store from '../store'
 
 Vue.use(VueRouter)
 
 const routes = [{
         path: '/',
-        redirect: '/login',
+        // redirect: '/login',
     },
     {
         path: '/login',
@@ -16,7 +17,8 @@ const routes = [{
     {
         path: '/student',
         name: 'Student',
-        component: (resolve) => require(['../views/StudentHome.vue'], resolve),
+        component: (resolve) =>
+            require(['../views/student/StudentHome.vue'], resolve),
         meta: {
             requireAuth: true,
         },
@@ -24,7 +26,37 @@ const routes = [{
     {
         path: '/teacher',
         name: 'Teacher',
-        component: (resolve) => require(['../views/TeacherHome.vue'], resolve),
+        component: (resolve) =>
+            require(['../views/teacher/TeacherHome.vue'], resolve),
+        children: [{
+                path: '/',
+                redirect: 'course',
+            },
+            {
+                path: 'course',
+                name: 'TeacherCourse',
+                component: (resolve) =>
+                    require(['../views/teacher/TeacherCourse.vue'], resolve),
+            },
+            {
+                path: 'course/:id',
+                name: 'SingleCourse',
+                component: (resolve) =>
+                    require(['../views/teacher/SingleCourse.vue'], resolve),
+            },
+            {
+                path: 'teacherManage',
+                name: 'TeacherManage',
+                component: (resolve) =>
+                    require(['../views/teacher/TeacherManage.vue'], resolve),
+            },
+            {
+                path: 'studentManage',
+                name: 'StudentManage',
+                component: (resolve) =>
+                    require(['../views/teacher/StudentManage.vue'], resolve),
+            },
+        ],
         meta: {
             requireAuth: true,
         },
@@ -38,11 +70,25 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+    if (to.path == '/') {
+        if (store.state.userType == 'student') {
+            router.replace('/student') //重定向
+        } else if (store.state.userType == 'teacher') {
+            router.replace('/teacher') //重定向教师
+        } else {
+            router.replace('/login') //重定向登录
+        }
+    }
     if (to.meta.requireAuth) {
-        router.push('login')
+        if (store.state.token) {
+            next()
+        } else {
+            router.push('login')
+        }
     } else {
         next()
     }
+    // console.log(to, from, next)
 })
 
 export default router
