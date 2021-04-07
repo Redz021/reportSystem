@@ -6,5 +6,6 @@ module.exports = (app) => {
     router.get('/course/:sid', ScLink.getCourses) //获取sno学生的所有课程
     router.delete('/student', ScLink.deleteStudent) //把学生从某门课程中移除（提供学生id、课程id）
     router.post('/students', ScLink.addBatchStudents) //批量添加学生（提供课程id、学生id[]）注意：未实现去重，可重复添加
+    router.delete('/students', ScLink.deleteBatchStudents)
     app.use('/api/scLink', router)
 }

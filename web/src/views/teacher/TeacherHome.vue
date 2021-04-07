@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <el-container class="teacher-container">
       <el-header class="header">
         <el-button type="text" style="color:#fff;" @click="collapse">
@@ -21,8 +20,8 @@
         <el-menu class="menu" default-active="1" :collapse="isCollapse">
           <el-menu-item index="1">
             <router-link to="/teacher/course">
-              <i class="el-icon-reading"></i>
-              <span>课程</span>
+              <i class="el-icon-s-home"></i>
+              <span>所有课程</span>
             </router-link>
           </el-menu-item>
           <el-submenu index="2">
@@ -37,6 +36,18 @@
               <router-link to="/teacher/studentManage">学生管理</router-link>
             </el-menu-item>
           </el-submenu>
+          <el-menu-item index="3">
+            <router-link to="/teacher/courseManage">
+              <i class="el-icon-reading"></i>
+              <span>课程管理</span>
+            </router-link>
+          </el-menu-item>
+          <el-menu-item index="4">
+            <router-link to="/teacher/memberManage">
+              <i class="el-icon-notebook-2"></i>
+              <span>成员管理</span>
+            </router-link>
+          </el-menu-item>
         </el-menu>
         <el-main class="main">
           <router-view></router-view>

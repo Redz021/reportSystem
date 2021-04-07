@@ -10,7 +10,7 @@
         <el-table stripe class="student-table" :data="students" max-height="600" border @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="40">
           </el-table-column>
-          <el-table-column prop="sno" label="工号"></el-table-column>
+          <el-table-column prop="sno" label="学号"></el-table-column>
           <el-table-column prop="studentClass" label="班级"></el-table-column>
           <el-table-column prop="studentName" label="姓名"></el-table-column>
           <el-table-column prop="password" label="密码"></el-table-column>

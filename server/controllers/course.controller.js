@@ -35,8 +35,8 @@ module.exports = {
                 teacher,
             } :
             {}
-        console.log(condition)
         Course.find(condition)
+            .populate({ path: 'teacher' })
             .then((data) => {
                 res.json(data)
             })
@@ -79,9 +79,7 @@ module.exports = {
             year: req.body.year,
             teacher: req.body.teacher,
         }
-        Course.findByIdAndUpdate(id, newData, {
-                useFindAndModify: false,
-            })
+        Course.findOneAndUpdate({ _id: id }, { $set: newData }, { new: true })
             .then((data) => {
                 if (!data) {
                     res.status(404).json({

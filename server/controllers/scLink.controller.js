@@ -108,6 +108,29 @@ module.exports = {
                 })
         }
     },
+    deleteBatchStudents: (req, res) => {
+        if (!req.body) {
+            res.status(400).json({ msg: '内容不能为空' })
+            return
+        }
+        const { course, students } = req.body
+        let flag = true
+        for (let student of students) {
+            ScLink.remove({ course, student })
+                .then((data) => {
+                    console.log(data)
+                })
+                .catch((err) => {
+                    console.error(err)
+                    flag = false
+                })
+        }
+        if (flag) {
+            res.send({ msg: '删除成功' })
+        } else {
+            res.status(404).send({ msg: '删除失败' })
+        }
+    },
     addBatchStudents: (req, res) => {
         if (!req.body) {
             res.status(400).json({ msg: '内容不能为空' })

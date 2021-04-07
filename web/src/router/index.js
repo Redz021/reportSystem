@@ -26,13 +26,10 @@ const routes = [{
     {
         path: '/teacher',
         name: 'Teacher',
+        redirect: '/teacher/course',
         component: (resolve) =>
             require(['../views/teacher/TeacherHome.vue'], resolve),
         children: [{
-                path: '/',
-                redirect: 'course',
-            },
-            {
                 path: 'course',
                 name: 'TeacherCourse',
                 component: (resolve) =>
@@ -55,6 +52,18 @@ const routes = [{
                 name: 'StudentManage',
                 component: (resolve) =>
                     require(['../views/teacher/StudentManage.vue'], resolve),
+            },
+            {
+                path: 'courseManage',
+                name: 'CourseManage',
+                component: (resolve) =>
+                    require(['../views/teacher/CourseManage.vue'], resolve),
+            },
+            {
+                path: 'memberManage',
+                name: 'MemberManage',
+                component: (resolve) =>
+                    require(['../views/teacher/MemberManage.vue'], resolve),
             },
         ],
         meta: {
