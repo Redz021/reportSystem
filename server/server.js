@@ -30,6 +30,7 @@ require('./routers/student.router')(app)
 require('./routers/teacher.router')(app)
 require('./routers/course.router')(app)
 require('./routers/scLink.router')(app)
+require('./routers/resources.router')(app)
 
 const PORT = 3000 || process.env.PORT
 app.listen(PORT, () => {

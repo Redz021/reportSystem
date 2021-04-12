@@ -6,5 +6,6 @@ module.exports = (app) => {
     router.get('/:id', Student.findOne) //按id查找学生
     router.put('/:id', Student.update) //更新id为id的学生信息，参数同创建学生
     router.delete('/:id', Student.delete) //删除id学生
+    router.delete('/', Student.deleteMany)
     app.use('/api/student', router)
 }

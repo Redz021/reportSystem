@@ -1,4 +1,3 @@
-const { mongoose } = require('.')
 module.exports = (mongoose) => {
     let schema = mongoose.Schema({
         tno: {
@@ -11,6 +10,7 @@ module.exports = (mongoose) => {
     }, {
         timestamps: true,
     })
+    schema.index({ tno: 1 }, { unique: true })
     schema.method('toJSON', function() {
         const { __v, _id, ...object } = this.toObject()
         object.id = _id

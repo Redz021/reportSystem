@@ -2,6 +2,7 @@ const config = require('../config')
 const mongoose = require('mongoose')
 mongoose.Promise = global.Promise
 mongoose.set('useFindAndModify', false)
+mongoose.set('useCreateIndex', true)
 
 const db = {
     mongoose,

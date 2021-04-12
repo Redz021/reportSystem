@@ -3,67 +3,107 @@
     <Loading v-if="isLoading"></Loading>
     <el-container v-if="!isLoading">
       <el-header>
-        <el-button style="height:100%;" type="text" @click="addTeacherVisible = true"><i class="el-icon-plus"></i>添加</el-button>
+        <el-button style="height:100%;"
+                   type="text"
+                   @click="addTeacherVisible = true"><i class="el-icon-plus"></i>添加</el-button>
       </el-header>
       <el-main>
-        <el-table stripe class="teacher-table" :data="teachers" max-height="600" border>
-          <el-table-column prop="tno" label="工号"></el-table-column>
-          <el-table-column prop="teacherName" label="姓名"></el-table-column>
-          <el-table-column prop="password" label="密码"></el-table-column>
-          <el-table-column label="操作" width="100">
+        <el-table stripe
+                  class="teacher-table"
+                  :data="teachers"
+                  max-height="600"
+                  border>
+          <el-table-column prop="tno"
+                           label="工号"></el-table-column>
+          <el-table-column prop="teacherName"
+                           label="姓名"></el-table-column>
+          <el-table-column prop="password"
+                           label="密码"></el-table-column>
+          <el-table-column label="操作"
+                           width="100">
             <template slot-scope="scope">
-              <el-button @click="showUpdate(scope.row)" type="text" size="small">编辑</el-button>
-              <el-button @click="showDelete(scope.row)" type="text" size="small">删除</el-button>
+              <el-button @click="showUpdate(scope.row)"
+                         type="text"
+                         size="small">编辑</el-button>
+              <el-button @click="showDelete(scope.row)"
+                         type="text"
+                         size="small">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-main>
 
-      <!--弹出添加对话框-->
-      <el-dialog title="添加" :visible.sync="addTeacherVisible">
-        <el-form :model="addForm">
-          <el-form-item label="工号">
+      <!--添加对话框-->
+      <el-dialog title="添加"
+                 width="400px"
+                 :visible.sync="addTeacherVisible">
+        <el-form :model="addForm"
+                 ref="addForm"
+                 :rules="rules"
+                 status-icon>
+          <el-form-item label="工号"
+                        prop="tno">
             <el-input v-model="addForm.tno"></el-input>
           </el-form-item>
-          <el-form-item label="姓名">
+          <el-form-item label="姓名"
+                        prop="teacherName">
             <el-input v-model="addForm.teacherName"></el-input>
           </el-form-item>
-          <el-form-item label="密码">
-            <el-input type="password" v-model="addForm.password"></el-input>
+          <el-form-item label="密码"
+                        prop="password">
+            <el-input type="password"
+                      v-model="addForm.password"></el-input>
           </el-form-item>
-          <el-form-item label="确认密码">
-            <el-input type="password" v-model="addForm.passwordConfirm"></el-input>
+          <el-form-item label="确认密码"
+                        prop="passwordConfirm">
+            <el-input type="password"
+                      v-model="addForm.passwordConfirm"></el-input>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer"
+             class="dialog-footer">
           <el-button @click="addTeacherVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addTeacher">确 定</el-button>
+          <el-button type="primary"
+                     @click="addTeacher">确 定</el-button>
         </div>
       </el-dialog>
-      <!-- 弹出删除对话框 -->
-      <el-dialog title="删除" :visible.sync="delTeacherVisible">
+      <!-- 删除对话框 -->
+      <el-dialog title="删除"
+                 width="400px"
+                 :visible.sync="delTeacherVisible">
         <span>确定要删除吗？</span>
         <span slot="footer">
           <el-button @click="delTeacherVisible = false">取 消</el-button>
-          <el-button type="danger" @click="deleteTeacher">确 定</el-button>
+          <el-button type="danger"
+                     @click="deleteTeacher">确 定</el-button>
         </span>
       </el-dialog>
-      <!-- 弹出编辑对话框 -->
-      <el-dialog title="编辑" :visible.sync="updateTeacherVisible">
-        <el-form :model="updateForm">
-          <el-form-item label="工号">
+      <!-- 编辑对话框 -->
+      <el-dialog title="编辑"
+                 width="400px"
+                 :visible.sync="updateTeacherVisible">
+        <el-form :model="updateForm"
+                 :rules="rules"
+                 ref="updateForm"
+                 status-icon>
+          <el-form-item label="工号"
+                        prop="tno">
             <el-input v-model="updateForm.tno"></el-input>
           </el-form-item>
-          <el-form-item label="姓名">
+          <el-form-item label="姓名"
+                        prop="teacherName">
             <el-input v-model="updateForm.teacherName"></el-input>
           </el-form-item>
-          <el-form-item label="密码">
+          <el-form-item label="密码"
+                        prop="password">
             <el-input v-model="updateForm.password"></el-input>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer"
+             class="dialog-footer">
           <el-button @click="updateTeacherVisible = false">取 消</el-button>
-          <el-button type="primary" @click="updateTeacher">确 定</el-button>
+          <el-button type="primary"
+                     @click="updateTeacher">确 定</el-button>
         </div>
       </el-dialog>
     </el-container>
@@ -79,6 +119,7 @@ export default {
   data() {
     return {
       isLoading: true,
+      teachers: [],
       addTeacherVisible: false,
       delTeacherVisible: false,
       updateTeacherVisible: false,
@@ -89,26 +130,37 @@ export default {
         password: "",
         passwordConfirm: ""
       },
+      rules: {
+        tno: [{ required: true, message: "请输入工号", trigger: "blur" }],
+        teacherName: [
+          { required: true, message: "请输入姓名", trigger: "blur" }
+        ],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        passwordConfirm: [
+          {
+            required: true,
+            validator: (rule, value, callback) => {
+              if (value === "") {
+                callback(new Error("请再次输入密码"));
+              } else if (value !== this.addForm.password) {
+                callback(new Error("两次输入密码不一致!"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "blur"
+          }
+        ]
+      },
       updateForm: {
         id: "",
         tno: "",
         teacherName: "",
         password: ""
-      },
-      teachers: []
+      }
     };
   },
   methods: {
-    getTeacher() {
-      this.axios
-        .get("/api/teacher")
-        .then(res => {
-          this.teachers = res.data;
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    },
     showUpdate(row) {
       this.updateForm.id = row.id;
       this.updateForm.tno = row.tno;
@@ -119,6 +171,56 @@ export default {
     showDelete(row) {
       this.delTeacherVisible = true;
       this.delTeacherId = row.id;
+    },
+    getTeacher() {
+      this.axios
+        .get("/api/teacher")
+        .then(res => {
+          this.teachers = res.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    addTeacher() {
+      this.$refs["addForm"].validate(valid => {
+        if (valid) {
+          const { tno, teacherName, password } = this.addForm;
+          this.axios
+            .post("/api/teacher", { tno, teacherName, password })
+            .then(res => {
+              console.log(res);
+              this.$message.success("添加成功");
+              this.getTeacher();
+              this.addTeacherVisible = false;
+            })
+            .catch(err => {
+              this.$message.error(`添加失败:${err.message}`);
+            });
+        }
+      });
+    },
+    updateTeacher() {
+      this.$refs["updateForm"].validate(valid => {
+        if (valid) {
+          const { tno, teacherName, password } = this.updateForm;
+          this.axios
+            .put(`/api/teacher/${this.updateForm.id}`, {
+              tno,
+              teacherName,
+              password
+            })
+            .then(res => {
+              console.log(res);
+              this.$message({ message: "修改成功", type: "success" });
+              this.getTeacher();
+              this.updateTeacherVisible = false;
+            })
+            .catch(err => {
+              this.$message.error(`修改失败:${err.message}`);
+            });
+        }
+      });
     },
     deleteTeacher() {
       console.log(this.delTeacherId);
@@ -131,39 +233,7 @@ export default {
           this.delTeacherVisible = false;
         })
         .catch(err => {
-          console.error(err);
-        });
-    },
-    addTeacher() {
-      const { tno, teacherName, password } = this.addForm;
-      this.axios
-        .post("/api/teacher", { tno, teacherName, password })
-        .then(res => {
-          console.log(res);
-          this.$message({ message: "添加成功", type: "success" });
-          this.getTeacher();
-          this.addTeacherVisible = false;
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    },
-    updateTeacher() {
-      const { tno, teacherName, password } = this.updateForm;
-      this.axios
-        .put(`/api/teacher/${this.updateForm.id}`, {
-          tno,
-          teacherName,
-          password
-        })
-        .then(res => {
-          console.log(res);
-          this.$message({ message: "修改成功", type: "success" });
-          this.getTeacher();
-          this.updateTeacherVisible = false;
-        })
-        .catch(err => {
-          console.error(err);
+          this.$message.error(`删除失败:${err.message}`);
         });
     }
   },
@@ -173,10 +243,9 @@ export default {
       .then(res => {
         this.teachers = res.data;
         this.isLoading = false;
-        console.log(res);
       })
       .catch(err => {
-        console.error(err);
+        this.$message.error(`获取失败:${err.message}`);
       });
   }
 };

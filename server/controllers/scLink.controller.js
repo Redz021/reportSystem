@@ -114,22 +114,26 @@ module.exports = {
             return
         }
         const { course, students } = req.body
-        let flag = true
-        for (let student of students) {
-            ScLink.remove({ course, student })
-                .then((data) => {
-                    console.log(data)
-                })
-                .catch((err) => {
-                    console.error(err)
-                    flag = false
-                })
-        }
-        if (flag) {
-            res.send({ msg: '删除成功' })
-        } else {
-            res.status(404).send({ msg: '删除失败' })
-        }
+            // let flag = true
+            // for (let student of students) {
+            //     ScLink.remove({ course, student })
+            //         .then((data) => {
+            //             console.log(data)
+            //         })
+            //         .catch((err) => {
+            //             console.error(err)
+            //             flag = false
+            //         })
+            // }
+        ScLink.deleteMany({ course, student: { $in: students } })
+            .then((data) => res.send({ message: '删除成功' }))
+            .catch((err) => res.status(400).send({ message: '删除失败', err }))
+
+        // if (flag) {
+        //     res.send({ msg: '删除成功' })
+        // } else {
+        //     res.status(404).send({ msg: '删除失败' })
+        // }
     },
     addBatchStudents: (req, res) => {
         if (!req.body) {

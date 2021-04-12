@@ -1,23 +1,37 @@
 <template>
   <el-container>
     <Loading v-if="isLoading"></Loading>
-    <div id="container" v-if="!isLoading">
-      <el-card class="loginCard" shadow="hover">
-        <div slot="header" id="header">
+    <div id="container"
+         v-if="!isLoading">
+      <el-card class="loginCard"
+               shadow="hover">
+        <div slot="header"
+             id="header">
           登录
         </div>
         <div id="loginForm">
-          <el-form ref="form" :model="form" :rules="rules">
-            <el-form-item label="学号/工号" prop="userNum">
+          <el-form ref="form"
+                   :model="form"
+                   :rules="rules">
+            <el-form-item label="学号/工号"
+                          prop="userNum">
               <el-input v-model="form.userNum"></el-input>
             </el-form-item>
-            <el-form-item label="密码" prop="password">
-              <el-input v-model="form.password" :type="visible?'text':'password'">
-                <i slot="suffix" :class="visible?'el-icon-open':'el-icon-turn-off'" @click="passwordVisible"></i>
+            <el-form-item label="密码"
+                          prop="password">
+              <el-input v-model="form.password"
+                        :type="visible?'text':'password'">
+                <i slot="suffix"
+                   :class="visible?'el-icon-open':'el-icon-turn-off'"
+                   @click="passwordVisible"></i>
               </el-input>
             </el-form-item>
             <el-form-item style="text-align: center;">
-              <el-button type="success" @click="login" icon="el-icon-check" plain circle></el-button>
+              <el-button type="success"
+                         @click="login"
+                         icon="el-icon-check"
+                         plain
+                         circle></el-button>
             </el-form-item>
           </el-form>
         </div>
