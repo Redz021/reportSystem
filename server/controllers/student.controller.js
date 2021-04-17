@@ -64,11 +64,18 @@ module.exports = {
         const { ids } = req.body
         Student.deleteMany({ _id: { $in: ids } })
             .then((data) => {
+                console.log(data)
                 ScLink.deleteMany({ student: { $in: ids } })
-                    .then((data) => res.send({ message: '删除成功', data }))
+                    .then((data) => {
+                        console.log(data)
+                        res.send({ message: '删除成功', data })
+                    })
                     .catch((err) => console.log(err))
                     // res.send({ message: '删除成功', data })
             })
-            .catch((err) => res.status(500).send({ message: '删除失败' }))
+            .catch((err) => {
+                console.log(err)
+                res.status(500).send({ message: '删除失败' })
+            })
     },
 }

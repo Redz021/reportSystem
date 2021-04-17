@@ -2,6 +2,7 @@ const router = require('express').Router()
 const multer = require('multer')
 const path = require('path')
 const xlsx = require('node-xlsx')
+const fs = require('fs')
 const { Student } = require('../models')
 
 const storage = multer.diskStorage({
@@ -37,7 +38,8 @@ module.exports = (app) => {
 
         Student.insertMany(students, { ordered: false })
             .then((data) => {
-                res.send(req.file)
+                fs.unlinkSync(req.file.path)
+                res.send({ message: '创建成功' })
             })
             .catch((err) => {
                 res.status(500).send({ message: `创建失败:${err}` })

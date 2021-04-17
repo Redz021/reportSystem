@@ -258,7 +258,7 @@ export default {
     },
     uploadFile() {
       if (this.fileList.length === 0) this.$message.warning("请选择文件");
-      this.$refs.upload.submit();
+      else this.$refs.upload.submit();
     },
     handleRemove() {
       this.fileList = [];

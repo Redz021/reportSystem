@@ -108,7 +108,7 @@ module.exports = {
                 })
         }
     },
-    deleteBatchStudents: (req, res) => {
+    deleteManyStudents: (req, res) => {
         if (!req.body) {
             res.status(400).json({ msg: '内容不能为空' })
             return
@@ -135,7 +135,7 @@ module.exports = {
         //     res.status(404).send({ msg: '删除失败' })
         // }
     },
-    addBatchStudents: (req, res) => {
+    addManyStudents: (req, res) => {
         if (!req.body) {
             res.status(400).json({ msg: '内容不能为空' })
             return
