@@ -5,15 +5,18 @@ module.exports = (mongoose) => {
             ref: 'course',
             require: true,
         },
+        title: String,
         format: String, //JSON转String
-        released: { type: Date, default: Date.now },
+        comment: String,
+        released: Date,
         deadline: Date,
     })
+    schema.index({ course: 1 }, { unique: true })
     schema.method('toJSON', function() {
         const { __v, _id, ...object } = this.toObject()
         object.id = _id
         return object
     })
-    const TaskOption = mongoose.model('taskOption', schema)
-    return TaskOption
+    const Task = mongoose.model('task', schema)
+    return Task
 }

@@ -11,7 +11,8 @@ const db = {
     Course: require('./course.model')(mongoose),
     Teacher: require('./teacher.model')(mongoose),
     ScLink: require('./scLink.model')(mongoose),
-    TaskOption: require('./taskOption.model')(mongoose),
+    Task: require('./task.model')(mongoose),
+    Report: require('./report.model')(mongoose),
 }
 
 module.exports = db

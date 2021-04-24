@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const config = require('./config')
 const app = express()
+const db = require('./models')
 
 let corsOptions = {
     origin: ['http://localhost:8080', 'http://127.0.0.1:5500'],
@@ -12,7 +13,6 @@ app.use(cors(corsOptions))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-const db = require('./models')
 db.mongoose
     .connect(db.url, {
         useNewUrlParser: true,
@@ -31,7 +31,8 @@ require('./routers/teacher.router')(app)
 require('./routers/course.router')(app)
 require('./routers/scLink.router')(app)
 require('./routers/resources.router')(app)
-require('./routers/taskOption.router')(app)
+require('./routers/task.router')(app)
+require('./routers/report.router')(app)
 
 const PORT = 3000 || process.env.PORT
 app.listen(PORT, () => {

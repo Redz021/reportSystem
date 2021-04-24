@@ -14,56 +14,62 @@
         </el-select>
       </el-header>
       <el-main>
-        <div class="table-header">
-          <span>当前学生</span>
-          <el-button type="text"
-                     @click="deleteManyStudents"><i class="el-icon-delete"></i>从课程中批量删除</el-button>
-        </div>
-        <!-- <el-button type="text"><i class="el-icon-plus"></i>向课程内添加学生</el-button> -->
-        <el-table stripe
-                  border
-                  :data="currentStudents"
-                  max-height="800"
-                  :default-sort="{prop:'sno',order:'descending'}"
-                  @selection-change="selectDeleteStudents">
-          <el-table-column type="selection"
-                           width="40"></el-table-column>
-          <el-table-column prop="sno"
-                           label="学号"
-                           sortable></el-table-column>
-          <el-table-column :filters="currentStudentClassesFilter"
-                           :filter-method="classFilterHandler"
-                           prop="studentClass"
-                           label="班级"
-                           sortable></el-table-column>
-          <el-table-column prop="studentName"
-                           label="姓名"></el-table-column>
-        </el-table>
-        <div class="table-header">
-          <span>向当前课程中添加学生</span>
-          <el-button type="primary"
-                     plain
-                     @click="addManyStudents"><i class="el-icon-plus"></i>添加</el-button>
-        </div>
-        <el-table stripe
-                  border
-                  ref="addStudentTable"
-                  :data="students"
-                  max-height="800"
-                  @selection-change="selectAddStudents">
-          <el-table-column type="selection"
-                           width="40"></el-table-column>
-          <el-table-column prop="sno"
-                           label="学号"
-                           sortable></el-table-column>
-          <el-table-column :filters="studentClassesFilter"
-                           :filter-method="classFilterHandler"
-                           sortable
-                           prop="studentClass"
-                           label="班级"></el-table-column>
-          <el-table-column prop="studentName"
-                           label="姓名"></el-table-column>
-        </el-table>
+        <el-tabs type="border-card">
+          <el-tab-pane label="当前学生">
+            <div class="table-header">
+              <span>当前学生</span>
+              <el-button type="text"
+                         @click="deleteManyStudents"><i class="el-icon-delete"></i>从课程中批量删除</el-button>
+            </div>
+            <!-- <el-button type="text"><i class="el-icon-plus"></i>向课程内添加学生</el-button> -->
+            <el-table stripe
+                      border
+                      :data="currentStudents"
+                      max-height="600"
+                      @selection-change="selectDeleteStudents">
+              <el-table-column type="selection"
+                               width="40"></el-table-column>
+              <el-table-column prop="sno"
+                               label="学号"
+                               sortable></el-table-column>
+              <el-table-column :filters="currentStudentClassesFilter"
+                               :filter-method="classFilterHandler"
+                               prop="studentClass"
+                               label="班级"
+                               sortable></el-table-column>
+              <el-table-column prop="studentName"
+                               label="姓名"></el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="添加学生">
+            <div class="table-header">
+              <span>向当前课程中添加学生</span>
+              <el-button type="primary"
+                         plain
+                         @click="addManyStudents"><i class="el-icon-plus"></i>添加</el-button>
+            </div>
+            <el-table stripe
+                      border
+                      ref="addStudentTable"
+                      :data="students"
+                      max-height="600"
+                      @selection-change="selectAddStudents">
+              <el-table-column type="selection"
+                               width="40"></el-table-column>
+              <el-table-column prop="sno"
+                               label="学号"
+                               sortable></el-table-column>
+              <el-table-column :filters="studentClassesFilter"
+                               :filter-method="classFilterHandler"
+                               sortable
+                               prop="studentClass"
+                               label="班级"></el-table-column>
+              <el-table-column prop="studentName"
+                               label="姓名"></el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
+
       </el-main>
     </el-container>
   </div>
