@@ -13,6 +13,7 @@ module.exports = (mongoose) => {
             require: true,
         },
     })
+    schema.index({ cno: 1 }, { unique: true })
     schema.method('toJSON', function() {
         const { __v, _id, ...object } = this.toObject()
         object.id = _id

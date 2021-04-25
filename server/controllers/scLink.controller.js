@@ -3,7 +3,7 @@ const { ScLink } = require('../models')
 module.exports = {
     create: async(req, res) => {
         if (!req.body) {
-            res.status(400).json({ msg: '内容不能为空' })
+            res.status(400).send({ msg: '内容不能为空' })
             return
         }
 
@@ -17,13 +17,13 @@ module.exports = {
             scLink
                 .save(scLink)
                 .then((data) => {
-                    res.json(data)
+                    res.send(data)
                 })
                 .catch((err) => {
-                    res.status(500).json({ msg: '添加失败', err })
+                    res.status(500).send({ msg: '添加失败', err })
                 })
         } else {
-            res.json({ msg: '已存在该学生' })
+            res.send({ msg: '已存在该学生' })
         }
     },
     getCourses: (req, res) => {
@@ -32,7 +32,7 @@ module.exports = {
             .populate({ path: 'course' })
             .then((data) => {
                 if (!data) {
-                    res.status(404).json({
+                    res.status(404).send({
                         message: `未找到student为${student}的对象`,
                     })
                 } else {
@@ -40,11 +40,11 @@ module.exports = {
                     data.forEach((element) => {
                         courses.push(element['course'])
                     })
-                    res.json({ msg: 'success', courses })
+                    res.send(course)
                 }
             })
             .catch((err) => {
-                res.status(500).json({
+                res.status(500).send({
                     message: `查找student为${student}的对象时出现错误:${err}`,
                 })
             })
@@ -55,7 +55,7 @@ module.exports = {
             .populate({ path: 'student' })
             .then((data) => {
                 if (!data) {
-                    res.status(404).json({
+                    res.status(404).send({
                         message: `未找到course为${course}的对象`,
                     })
                 } else {
@@ -63,27 +63,27 @@ module.exports = {
                     data.forEach((element) => {
                         students.push(element['student'])
                     })
-                    res.json({ msg: 'success', students })
+                    res.send(students)
                 }
             })
             .catch((err) => {
-                res.status(500).json({
+                res.status(500).send({
                     message: `查找course为${course}的对象时出现错误:${err}`,
                 })
             })
     },
     deleteStudent: (req, res) => {
         if (!req.body) {
-            res.status(400).json({
+            res.status(400).send({
                 msg: '删除的内容不能为空',
             })
             return
         }
         if (!req.body.student) {
-            res.json({ msg: '学生不能为空' })
+            res.send({ msg: '学生不能为空' })
             return
         } else if (!req.body.course) {
-            res.json({ msg: '课程不能为空' })
+            res.send({ msg: '课程不能为空' })
             return
         } else {
             ScLink.findOneAndRemove({
@@ -110,34 +110,17 @@ module.exports = {
     },
     deleteManyStudents: (req, res) => {
         if (!req.body) {
-            res.status(400).json({ msg: '内容不能为空' })
+            res.status(400).send({ msg: '内容不能为空' })
             return
         }
         const { course, students } = req.body
-            // let flag = true
-            // for (let student of students) {
-            //     ScLink.remove({ course, student })
-            //         .then((data) => {
-            //             console.log(data)
-            //         })
-            //         .catch((err) => {
-            //             console.error(err)
-            //             flag = false
-            //         })
-            // }
         ScLink.deleteMany({ course, student: { $in: students } })
             .then((data) => res.send({ message: '删除成功' }))
             .catch((err) => res.status(400).send({ message: '删除失败', err }))
-
-        // if (flag) {
-        //     res.send({ msg: '删除成功' })
-        // } else {
-        //     res.status(404).send({ msg: '删除失败' })
-        // }
     },
     addManyStudents: (req, res) => {
         if (!req.body) {
-            res.status(400).json({ msg: '内容不能为空' })
+            res.status(400).send({ msg: '内容不能为空' })
             return
         }
         const { course, students } = req.body
@@ -153,6 +136,6 @@ module.exports = {
                 console.log(err)
             })
 
-        res.json({ msg: 'tested' })
+        res.send({ msg: 'tested' })
     },
 }

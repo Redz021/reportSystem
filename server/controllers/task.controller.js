@@ -12,17 +12,17 @@ module.exports = {
         console.log({ course, title, format, comment, released, deadline })
         new Task({ course, title, format, comment, released, deadline })
             .save()
-            .then((data) => res.send({ message: 'success', data }))
-            .catch((err) => res.status(500).send({ message: 'error', err }))
+            .then((data) => res.send(data))
+            .catch((err) => res.status(500).send(err))
     },
     findByCourse: (req, res) => {
         const course = req.query.course
             // console.log(course)
         Task.findOne({ course })
             .then((data) => {
-                return res.send({ message: 'success', data })
+                return res.send(data)
             })
-            .catch((err) => res.status(404).send({ message: 'error', err }))
+            .catch((err) => res.status(404).send(err))
     },
     update: (req, res) => {
         const id = req.params.id
@@ -32,13 +32,13 @@ module.exports = {
         deadline = new Date(deadline)
 
         Task.findOneAndUpdate({ _id: id }, { $set: { course, title, format, comment, released, deadline } }, { new: true })
-            .then((data) => res.send({ message: 'success', data }))
-            .catch((err) => res.send({ message: 'error', err }))
+            .then((data) => res.send(data))
+            .catch((err) => res.send(err))
     },
     deleteById: (req, res) => {
         const id = req.params.id
         Task.findByIdAndRemove(id)
-            .then((data) => res.send({ message: 'success', data }))
-            .catch((err) => res.send({ message: 'error', err }))
+            .then((data) => res.send(data))
+            .catch((err) => res.send(err))
     },
 }

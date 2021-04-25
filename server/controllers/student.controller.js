@@ -7,7 +7,7 @@ module.exports = {
         student
             .save()
             .then((data) => res.send(data))
-            .catch((err) => res.status(500).send({ message: `创建失败:${err}` }))
+            .catch((err) => res.status(500).send(err))
     },
     findAll: (req, res) => {
         const studentClass = req.query.studentClass
@@ -16,22 +16,17 @@ module.exports = {
             {}
         Student.find(condition)
             .then((data) => res.send(data))
-            .catch((err) => res.status(500).send({ message: err || '查找失败' }))
+            .catch((err) => res.status(500).send(err))
     },
     findOne: (req, res) => {
         const id = req.params.id
         Student.findById(id)
-            .then((data) => {
-                data
-                    ?
-                    res.send(data) :
-                    res.status(404).send({ message: `未找到id为${id}的对象` })
-            })
-            .catch((err) =>
-                res
-                .status(500)
-                .send({ message: `查找id为${id}的对象时出现错误:${err}` })
+            .then((data) =>
+                data ?
+                res.send(data) :
+                res.status(404).send({ message: `未找到id为${id}的对象` })
             )
+            .catch((err) => res.status(500).send(err))
     },
     update: (req, res) => {
         const id = req.params.id
@@ -42,40 +37,27 @@ module.exports = {
                 res.send(data) :
                 res.status(404).send({ message: `无法更新id为${id}的对象` })
             )
-            .catch((err) =>
-                res
-                .status(500)
-                .send({ message: `更新id为${id}的对象时出现错误:${err}` })
-            )
+            .catch((err) => res.status(500).send(err))
     },
     delete: (req, res) => {
         const id = req.params.id
         Student.findByIdAndRemove(id)
             .then((data) =>
                 data ?
-                res.send({ message: '删除成功' }) :
+                res.send(data) :
                 res.status(404).send({ message: `无法删除id为${id}的对象` })
             )
-            .catch((err) =>
-                res.status(500).send({ message: `删除id为${id}的对象时出错:${err}` })
-            )
+            .catch((err) => res.status(500).send(err))
     },
     deleteMany: (req, res) => {
         const { ids } = req.body
         Student.deleteMany({ _id: { $in: ids } })
             .then((data) => {
                 console.log(data)
-                ScLink.deleteMany({ student: { $in: ids } })
-                    .then((data) => {
-                        console.log(data)
-                        res.send({ message: '删除成功', data })
-                    })
-                    .catch((err) => console.log(err))
-                    // res.send({ message: '删除成功', data })
+                ScLink.deleteMany({ student: { $in: ids } }).then((data) =>
+                    res.send(data)
+                )
             })
-            .catch((err) => {
-                console.log(err)
-                res.status(500).send({ message: '删除失败' })
-            })
+            .catch((err) => res.status(500).senda(err))
     },
 }

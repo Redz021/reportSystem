@@ -90,14 +90,18 @@ router.beforeEach((to, from, next) => {
     }
     if (to.meta.requireAuth) {
         if (store.state.token) {
-            next()
+            let path = to.path.match(/\/(\w+)\/?/)[1]
+            if (store.state.userType == path) {
+                next()
+            } else {
+                router.replace(`/${store.state.userType}`)
+            }
         } else {
             router.push('login')
         }
     } else {
         next()
     }
-    // console.log(to, from, next)
 })
 
 export default router

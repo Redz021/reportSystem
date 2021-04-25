@@ -5,7 +5,8 @@
       <h1>学生页</h1>
       <button @click="logout">注销</button>
       <ul>
-        <li v-for="course in courses" :key="course.id">{{course}}</li>
+        <li v-for="course in courses"
+            :key="course.id">{{course}}</li>
       </ul>
     </div>
   </div>
@@ -18,7 +19,6 @@ export default {
       user: {},
       courses: [],
       isLoading: true
-      // dataLoaded: false
     };
   },
   components: { Loading },
@@ -34,7 +34,7 @@ export default {
       .get(`/api/scLink/course/${this.user.id}`)
       .then(res => {
         console.log(res);
-        this.courses = res.data.courses;
+        this.courses = res.data;
         this.isLoading = false;
       })
       .catch(err => {

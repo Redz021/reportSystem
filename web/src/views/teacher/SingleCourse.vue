@@ -311,7 +311,7 @@ export default {
       this.axios
         .get("/api/task", { params: { course: this.course } })
         .then(res => {
-          this.task = res.data.data;
+          this.task = res.data;
           console.log(res);
         })
         .catch(err => {
@@ -367,7 +367,7 @@ export default {
     this.axios
       .get("/api/task", { params: { course: this.course } })
       .then(async res => {
-        this.task = res.data.data;
+        this.task = res.data;
         const reports = await this.axios.get(
           `/api/report/task/${this.task.id}`
         );
@@ -375,8 +375,9 @@ export default {
           `/api/scLink/student/${this.course}`
         );
 
-        this.reports = reports.data.data;
-        this.students = students.data.students;
+        this.reports = reports.data;
+        this.students = students.data;
+        console.log(this.reports, this.students);
         this.isLoading = false;
       })
       .catch(err => {

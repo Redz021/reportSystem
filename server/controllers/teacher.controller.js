@@ -10,7 +10,7 @@ module.exports = {
         teacher
             .save(teacher)
             .then((data) => res.send(data))
-            .catch((err) => res.status(400).send({ message: err || '用户已存在' }))
+            .catch((err) => res.status(400).send(err))
     },
     findAll: (req, res) => {
         const tno = req.query.tno
@@ -19,7 +19,7 @@ module.exports = {
             {}
         Teacher.find(condition)
             .then((data) => res.send(data))
-            .catch((err) => res.status(500).send({ message: err || '查找失败' }))
+            .catch((err) => res.status(500).send(err))
     },
     findOne: (req, res) => {
         const id = req.params.id
@@ -29,11 +29,7 @@ module.exports = {
                 res.send(data) :
                 res.status(404).send({ message: `未找到id为${id}的对象` })
             )
-            .catch((err) =>
-                res
-                .status(500)
-                .send({ message: `查找id为${id}的对象时出现错误:${err}` })
-            )
+            .catch((err) => res.status(500).send(err))
     },
     update: (req, res) => {
         if (!req.body) {
@@ -47,20 +43,18 @@ module.exports = {
                 res.send(data) :
                 res.status(404).send({ message: `未找到id为${id}的对象` })
             )
-            .catch((err) => res.status(500).send({ message: err }))
+            .catch((err) => res.status(500).send(err))
     },
     delete: (req, res) => {
         const id = req.params.id
         Teacher.findByIdAndRemove(id)
             .then((data) =>
                 data ?
-                res.send({ message: '删除成功' }) :
+                res.send(data) :
                 res.status(404).send({
                     message: `无法删除id为${id}的对象`,
                 })
             )
-            .catch((err) =>
-                res.status(500).send({ message: `删除id为${id}的对象时出错:${err}` })
-            )
+            .catch((err) => res.status(500).send(err))
     },
 }

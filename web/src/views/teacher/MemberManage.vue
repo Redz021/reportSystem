@@ -41,7 +41,8 @@
                                label="姓名"></el-table-column>
             </el-table>
           </el-tab-pane>
-          <el-tab-pane label="添加学生">
+          <el-tab-pane :disabled="currentCourse?false:true"
+                       label="添加学生">
             <div class="table-header">
               <span>向当前课程中添加学生</span>
               <el-button type="primary"
@@ -175,7 +176,7 @@ export default {
         .get(`/api/scLink/student/${this.currentCourse}`)
         .then(res => {
           console.log(res);
-          this.currentStudents = res.data.students;
+          this.currentStudents = res.data;
           this.$refs.addStudentTable.clearSelection();
         })
         .catch(err => {
