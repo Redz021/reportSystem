@@ -4,14 +4,16 @@
     <div v-else
          class="course-container">
       <div class="course-tips"
-           v-if="courses.length===0">当前无课程</div>
+           v-if="courses.length===0">
+        当前无课程
+      </div>
       <el-card shadow="hover"
-               class="course"
+               class="course-card"
                v-for="course in courses"
                :key="course.id">
         <div class="course-name"
              slot="header">
-          <router-link :to="{name:'SingleCourse',params:{id:course.id}}">
+          <router-link :to="{name: 'StudentSingleCourse',params:{id:course.id}}">
             {{course.courseName}}
           </router-link>
         </div>
@@ -23,30 +25,27 @@
 <script>
 import Loading from "@/components/Loading";
 export default {
-  name: "TeacherCourse",
+  name: "StudentCourse",
   components: { Loading },
   data() {
     return {
       user: {},
       isLoading: true,
-
       courses: []
     };
   },
   created() {
     this.user = this.$store.state.user;
     this.axios
-      .get(`/api/course/?teacher=${this.user.id}`)
+      .get(`/api/scLink/course/${this.user.id}`)
       .then(res => {
         this.courses = res.data;
         this.isLoading = false;
-        console.log(res);
       })
       .catch(err => {
         console.error(err);
       });
-  },
-  methods: {}
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -65,7 +64,8 @@ a {
     color: #666;
     font-size: 24px;
   }
-  .course {
+  .course-card {
+    width: 33%;
     max-width: 300px;
     min-width: 200px;
     margin: 10px;

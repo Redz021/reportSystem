@@ -40,10 +40,11 @@ module.exports = {
                     data.forEach((element) => {
                         courses.push(element['course'])
                     })
-                    res.send(course)
+                    res.send(courses)
                 }
             })
             .catch((err) => {
+                console.error(err)
                 res.status(500).send({
                     message: `查找student为${student}的对象时出现错误:${err}`,
                 })

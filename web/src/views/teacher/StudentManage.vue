@@ -257,10 +257,10 @@ export default {
       window.location.href = "http://localhost:8080/docs/导入模板.xlsx";
     },
     uploadFile() {
-      console.log(this.fileList);
+      // console.log(this.fileList);
       // if (this.fileList.length === 0) this.$message.warning("请选择文件");
       // else this.$refs.upload.submit();
-      // this.$refs["upload"].submit();
+      this.$refs["upload"].submit();
     },
     handleRemove() {
       this.fileList = [];
@@ -278,6 +278,7 @@ export default {
       const fileObj = param.file;
       const formData = new FormData();
       formData.append("file", fileObj);
+      console.log(fileObj);
       this.axios
         .post("/api/upload/students", formData, {
           headers: { "Content-type": "multipart/form-data" }

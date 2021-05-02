@@ -11,8 +11,9 @@
         </el-button>
       </div>
       <el-container v-else>
-        <el-header>
-          <span style="font-size: 24px;">当前任务</span>
+        <el-header style="display: flex;align-items: center;">
+          <el-page-header @back="goBack"
+                          content="当前任务"></el-page-header>
         </el-header>
         <el-main>
           <div class="task-content">
@@ -75,8 +76,10 @@
                     <el-table-column prop="studentName"
                                      label="姓名"></el-table-column>
                     <el-table-column label="报告">
-                      <el-button type="text"
-                                 @click="test">查看</el-button>
+                      <template slot-scope="scope">
+                        <el-button type="text"
+                                   @click="test(scope.row)">查看</el-button>
+                      </template>
                     </el-table-column>
                   </el-table>
                 </el-tab-pane>
@@ -121,6 +124,7 @@
           <el-form-item label="备注"
                         prop="comment">
             <el-input type="textarea"
+                      autosize
                       v-model="addForm.comment"></el-input>
           </el-form-item>
           <el-form-item :label="'章节'+(index+1)"
@@ -170,6 +174,7 @@
           <el-form-item label="备注"
                         prop="comment">
             <el-input type="textarea"
+                      autosize
                       v-model="updateForm.comment"></el-input>
           </el-form-item>
           <el-form-item :label="'章节'+(index+1)"
@@ -257,8 +262,14 @@ export default {
     }
   },
   methods: {
-    test() {
-      console.log(this.submittedStudents, this.unSubmittedStudents);
+    goBack() {
+      this.$router.back();
+    },
+    test(student) {
+      let report = this.reports.filter(
+        item => item.student._id === student._id
+      )[0].id;
+      this.$router.push({ name: "TeacherReport", params: { id: report } });
     },
     showUpdate() {
       this.updateForm.title = this.task.title;
@@ -368,16 +379,18 @@ export default {
       .get("/api/task", { params: { course: this.course } })
       .then(async res => {
         this.task = res.data;
-        const reports = await this.axios.get(
-          `/api/report/task/${this.task.id}`
-        );
         const students = await this.axios.get(
           `/api/scLink/student/${this.course}`
         );
-
-        this.reports = reports.data;
         this.students = students.data;
-        console.log(this.reports, this.students);
+        if (this.task) {
+          const reports = await this.axios.get(
+            `/api/report/task/${this.task.id}`
+          );
+
+          this.reports = reports.data;
+          console.log(this.reports, this.students);
+        }
         this.isLoading = false;
       })
       .catch(err => {
@@ -388,6 +401,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .notask-notify {
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -415,13 +429,11 @@ export default {
 }
 .task-card {
   min-width: 350px;
-  max-width: 450px;
-  max-height: 600px;
   flex: 1;
 }
 .reports {
-  flex: 2;
   min-width: 600px;
+  flex: 2;
   // border: 1px solid #ddd;
 }
 </style>

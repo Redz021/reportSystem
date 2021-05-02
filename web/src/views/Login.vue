@@ -1,8 +1,7 @@
 <template>
   <el-container>
-    <Loading v-if="isLoading"></Loading>
     <div id="container"
-         v-if="!isLoading">
+         v-loading="isLoading">
       <el-card class="loginCard"
                shadow="hover">
         <div slot="header"
@@ -40,10 +39,8 @@
   </el-container>
 </template>
 <script>
-import Loading from "@/components/Loading.vue";
 export default {
   name: "Login",
-  components: { Loading },
   data() {
     return {
       form: {
@@ -103,11 +100,6 @@ export default {
               this.$router.replace("/teacher");
               console.log(res.data);
             }
-            // if (res.data.type == 0) {
-            //   this.$router.push("/student");
-            // } else {
-            //   this.$router.push("/teacher");
-            // }
           }
         })
         .catch(err => {
@@ -133,8 +125,6 @@ export default {
 </script>
 <style lang="less" scoped>
 #container {
-  background-image: url("../assets/mountain-range.jpg");
-  background-size: cover;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -153,5 +143,11 @@ export default {
       padding: 1em;
     }
   }
+}
+#container::before {
+  background: url(../assets/bg.jpg);
+  z-index: -1;
+  width: 100%;
+  height: 100%;
 }
 </style>

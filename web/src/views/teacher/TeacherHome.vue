@@ -2,9 +2,13 @@
   <div>
     <el-container class="teacher-container">
       <el-header class="header">
-        <el-button type="text" style="color:#fff;" @click="collapse">
-          <i class="el-icon-s-fold" v-show="!isCollapse"></i>
-          <i class="el-icon-s-unfold" v-show="isCollapse"></i>
+        <el-button type="text"
+                   style="color:#fff;"
+                   @click="collapse">
+          <i class="el-icon-s-fold"
+             v-show="!isCollapse"></i>
+          <i class="el-icon-s-unfold"
+             v-show="isCollapse"></i>
         </el-button>
         <el-dropdown class="user-info">
           <span>{{user.teacherName}}
@@ -17,7 +21,9 @@
         </el-dropdown>
       </el-header>
       <el-container>
-        <el-menu class="menu" default-active="1" :collapse="isCollapse">
+        <el-menu class="menu"
+                 default-active="1"
+                 :collapse="isCollapse">
           <el-menu-item index="1">
             <router-link to="/teacher/course">
               <i class="el-icon-s-home"></i>
@@ -90,7 +96,7 @@ a {
 .teacher-container {
   height: 100vh;
   .header {
-    background: #2c82c9;
+    background: #22a7f0;
     color: #fff;
     display: flex;
     align-items: center;
