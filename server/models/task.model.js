@@ -11,7 +11,6 @@ module.exports = (mongoose) => {
         released: Date,
         deadline: Date,
     })
-    schema.index({ course: 1 }, { unique: true })
     schema.method('toJSON', function() {
         const { __v, _id, ...object } = this.toObject()
         object.id = _id

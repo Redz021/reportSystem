@@ -17,8 +17,6 @@
                            label="工号"></el-table-column>
           <el-table-column prop="teacherName"
                            label="姓名"></el-table-column>
-          <el-table-column prop="password"
-                           label="密码"></el-table-column>
           <el-table-column label="操作"
                            width="100">
             <template slot-scope="scope">
@@ -28,6 +26,9 @@
               <el-button @click="showDelete(scope.row)"
                          type="text"
                          size="small">删除</el-button>
+              <el-button @click="resetPassword(scope.row)"
+                         type="text"
+                         size="small">重置密码</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -161,11 +162,17 @@ export default {
     };
   },
   methods: {
+    resetPassword(row) {
+      const id = row.id;
+      this.axios
+        .put(`/api/teacher/reset/${id}`)
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
+    },
     showUpdate(row) {
       this.updateForm.id = row.id;
       this.updateForm.tno = row.tno;
       this.updateForm.teacherName = row.teacherName;
-      this.updateForm.password = row.password;
       this.updateTeacherVisible = true;
     },
     showDelete(row) {
@@ -185,9 +192,9 @@ export default {
     addTeacher() {
       this.$refs["addForm"].validate(valid => {
         if (valid) {
-          const { tno, teacherName, password } = this.addForm;
+          const { tno, teacherName } = this.addForm;
           this.axios
-            .post("/api/teacher", { tno, teacherName, password })
+            .post("/api/teacher", { tno, teacherName })
             .then(res => {
               console.log(res);
               this.$message.success("添加成功");
@@ -203,17 +210,17 @@ export default {
     updateTeacher() {
       this.$refs["updateForm"].validate(valid => {
         if (valid) {
-          const { tno, teacherName, password } = this.updateForm;
+          const { tno, teacherName } = this.updateForm;
           this.axios
             .put(`/api/teacher/${this.updateForm.id}`, {
               tno,
-              teacherName,
-              password
+              teacherName
             })
             .then(res => {
               console.log(res);
               this.$message({ message: "修改成功", type: "success" });
               this.getTeacher();
+              this.$emit("update");
               this.updateTeacherVisible = false;
             })
             .catch(err => {

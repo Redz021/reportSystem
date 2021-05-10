@@ -36,8 +36,6 @@
                            label="班级"></el-table-column>
           <el-table-column prop="studentName"
                            label="姓名"></el-table-column>
-          <el-table-column prop="password"
-                           label="密码"></el-table-column>
           <el-table-column label="操作"
                            width="100">
             <template slot-scope="scope">
@@ -47,6 +45,9 @@
               <el-button @click="showDelete(scope.row)"
                          type="text"
                          size="small">删除</el-button>
+              <el-button @click="resetPassword(scope.row)"
+                         type="text"
+                         size="small">重置密码</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -70,16 +71,6 @@
           <el-form-item label="姓名"
                         prop="studentName">
             <el-input v-model="addForm.studentName"></el-input>
-          </el-form-item>
-          <el-form-item label="密码"
-                        prop="password">
-            <el-input type="password"
-                      v-model="addForm.password"></el-input>
-          </el-form-item>
-          <el-form-item label="确认密码"
-                        prop="passwordConfirm">
-            <el-input type="password"
-                      v-model="addForm.passwordConfirm"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer"
@@ -118,10 +109,6 @@
           <el-form-item label="姓名"
                         prop="studentName">
             <el-input v-model="updateForm.studentName"></el-input>
-          </el-form-item>
-          <el-form-item label="密码"
-                        prop="password">
-            <el-input v-model="updateForm.password"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer"
@@ -192,16 +179,13 @@ export default {
       addForm: {
         sno: "",
         studentClass: "",
-        studentName: "",
-        password: "",
-        passwordConfirm: ""
+        studentName: ""
       },
       updateForm: {
         id: "",
         sno: "",
         studentClass: "",
-        studentName: "",
-        password: ""
+        studentName: ""
       },
       rules: {
         sno: [{ required: true, message: "请输入学号", trigger: "blur" }],
@@ -210,22 +194,6 @@ export default {
         ],
         studentClass: [
           { required: true, message: "请输入班级", trigger: "blur" }
-        ],
-        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
-        passwordConfirm: [
-          {
-            required: true,
-            validator: (rule, value, callback) => {
-              if (value === "") {
-                callback(new Error("请再次输入密码"));
-              } else if (value !== this.addForm.password) {
-                callback(new Error("两次输入密码不一致!"));
-              } else {
-                callback();
-              }
-            },
-            trigger: "change"
-          }
         ]
       }
     };
@@ -245,6 +213,13 @@ export default {
     }
   },
   methods: {
+    resetPassword(row) {
+      const id = row.id;
+      this.axios
+        .put(`/api/student/reset/${id}`)
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
+    },
     handleSelectionChange(val) {
       this.selectedStudents = val;
     },
@@ -300,7 +275,6 @@ export default {
       this.updateForm.sno = row.sno;
       this.updateForm.studentClass = row.studentClass;
       this.updateForm.studentName = row.studentName;
-      this.updateForm.password = row.password;
       this.updateStudentVisible = true;
     },
     showDelete(row) {
@@ -327,9 +301,9 @@ export default {
     addStudent() {
       this.$refs["addForm"].validate(valid => {
         if (valid) {
-          const { sno, studentClass, studentName, password } = this.addForm;
+          const { sno, studentClass, studentName } = this.addForm;
           this.axios
-            .post("/api/student", { sno, studentClass, studentName, password })
+            .post("/api/student", { sno, studentClass, studentName })
             .then(res => {
               this.$message({ message: "添加成功", type: "success" });
               this.getStudent();
@@ -344,13 +318,12 @@ export default {
     updateStudent() {
       this.$refs["updateForm"].validate(valid => {
         if (valid) {
-          const { sno, studentClass, studentName, password } = this.updateForm;
+          const { sno, studentClass, studentName } = this.updateForm;
           this.axios
             .put(`/api/student/${this.updateForm.id}`, {
               sno,
               studentClass,
-              studentName,
-              password
+              studentName
             })
             .then(res => {
               this.$message({ message: "修改成功", type: "success" });

@@ -2,10 +2,9 @@ const { Report } = require('../models')
 
 module.exports = {
     create: (req, res) => {
-        let { task, course, student, content, submit, isSubmitted } = req.body
-        submit = new Date(submit)
+        let { task, course, student } = req.body
 
-        new Report({ task, course, student, content, submit, isSubmitted })
+        new Report({ task, course, student })
             .save()
             .then((data) => res.send(data))
             .catch((err) => {
@@ -45,9 +44,22 @@ module.exports = {
     },
     submit: (req, res) => {
         const id = req.params.id
-
-        Report.findOneAndUpdate({ _id: id }, { $set: { isSubmitted: true } }, { new: true })
+        const submit = Date.now()
+        Report.findOneAndUpdate({ _id: id }, { $set: { submitted: true, submit } }, { new: true })
             .then((data) => res.send(data))
             .catch((err) => res.status(500).send(err))
+    },
+    evaluate: (req, res) => {
+        const id = req.params.id
+        let { mark, comment } = req.body
+        mark = JSON.stringify(mark)
+        comment = JSON.stringify(comment)
+
+        Report.findOneAndUpdate({ _id: id }, { $set: { mark, comment, evaluated: true } }, { new: true })
+            .then((data) => res.send(data))
+            .catch((err) => {
+                console.log(err)
+                res.status(500).send(err)
+            })
     },
 }

@@ -4,6 +4,8 @@ const path = require('path')
 const xlsx = require('node-xlsx')
 const fs = require('fs')
 const { Student } = require('../models')
+const bcrypt = require('bcrypt')
+const config = require('../config')
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -17,22 +19,27 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 module.exports = (app) => {
-    router.post('/students', upload.single('file'), (req, res) => {
+    router.post('/students', upload.single('file'), async(req, res) => {
         const list = xlsx.parse(req.file.path)[0].data
         let students = []
         let props = list.shift()
-        let standard = ['sno', 'studentName', 'studentClass', 'password']
+        let standard = ['sno', 'studentName', 'studentClass']
         if (props.length !== standard.length)
             return res.status(400).send({ message: '模板格式错误' })
         for (let item of standard) {
             if (!props.includes(item))
                 return res.status(400).send({ message: '模板格式错误' })
         }
+        const password = await bcrypt.hash(
+            config.originalPassword,
+            await bcrypt.genSalt(10)
+        )
         for (let i = 0; i < list.length; i++) {
             let temp = {}
             for (let j = 0; j < props.length; j++) {
                 temp[props[j]] = list[i][j]
             }
+            temp['password'] = password
             students.push(temp)
         }
 

@@ -16,10 +16,17 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>修改密码</el-dropdown-item>
             <el-dropdown-item>
               <el-link :underline="false"
-                       @click="logout">退出</el-link>
+                       @click="showUpdatePassword">
+                修改密码
+              </el-link>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <el-link :underline="false"
+                       @click="logout">
+                退出
+              </el-link>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -40,6 +47,32 @@
         </el-main>
       </el-container>
     </el-container>
+    <el-dialog :visible.sync="updatePasswordVisible"
+               :close-on-click-modal="false"
+               width="500px">
+      <div slot="title">
+        <span>修改密码</span>
+      </div>
+      <el-form ref="updateForm"
+               :rules="rules"
+               :model="updateForm">
+        <el-form-item label="新密码"
+                      prop="newPassword">
+          <el-input type="password"
+                    v-model="updateForm.newPassword"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码"
+                      prop="confirmPassword">
+          <el-input type="password"
+                    v-model="updateForm.confirmPassword"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="updatePasswordVisible=false">取消</el-button>
+        <el-button @click="updatePassword"
+                   type="primary">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -48,10 +81,56 @@ export default {
     return {
       user: {},
       courses: [],
-      isCollapse: false
+      updateForm: {
+        newPassword: "",
+        confirmPassword: ""
+      },
+      rules: {
+        newPassword: [
+          { required: true, message: "输入新密码", trigger: "blur" }
+        ],
+        confirmPassword: [
+          {
+            required: true,
+            validator: (rule, value, callback) => {
+              if (value === "") {
+                callback(new Error("请再次输入密码"));
+              } else if (value !== this.updateForm.newPassword) {
+                callback(new Error("两次输入密码不一致!"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "change"
+          }
+        ]
+      },
+      isCollapse: false,
+      updatePasswordVisible: false
     };
   },
   methods: {
+    updatePassword() {
+      this.$refs["updateForm"].validate(valid => {
+        if (valid) {
+          this.axios
+            .put(`/api/student/password/${this.user.id}`, {
+              password: this.updateForm.newPassword
+            })
+            .then(res => {
+              console.log(res);
+              this.$message.success("修改成功");
+              this.logout();
+            })
+            .catch(err => {
+              console.error(err);
+            });
+        }
+      });
+    },
+    showUpdatePassword() {
+      this.updatePasswordVisible = true;
+    },
     logout() {
       this.$store.dispatch("logout");
       this.$router.replace("/login");

@@ -3,9 +3,12 @@ module.exports = (mongoose) => {
         task: { type: mongoose.Schema.ObjectId, ref: 'task', require: true },
         course: { type: mongoose.Schema.ObjectId, ref: 'course', require: true },
         student: { type: mongoose.Schema.ObjectId, ref: 'student', require: true },
-        content: { type: String, default: '[]' },
+        content: { type: String, default: '{}' },
+        mark: { type: String, default: '{}' },
+        comment: { type: String, default: '{}' },
         submit: { type: Date, default: Date.now },
-        isSubmitted: { type: Boolean, default: false },
+        submitted: { type: Boolean, default: false },
+        evaluated: { type: Boolean, default: false },
     })
     schema.method('toJSON', function() {
         const { __v, _id, ...object } = this.toObject()

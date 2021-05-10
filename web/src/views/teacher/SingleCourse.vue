@@ -243,7 +243,7 @@ export default {
   computed: {
     submittedStudents: function() {
       return this.reports
-        .filter(item => item.isSubmitted)
+        .filter(item => item.submitted)
         .map(item => item.student);
     },
     unSubmittedStudents: function() {

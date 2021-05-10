@@ -31,8 +31,7 @@
         </el-collapse>
       </el-main>
       <el-footer>
-        <el-button type="primary"
-                   @click="evaluateReport">提交</el-button>
+        <el-button type="primary">提交</el-button>
       </el-footer>
     </el-container>
   </div>
@@ -56,12 +55,15 @@ export default {
   },
   created() {
     this.id = this.$route.params.id;
+    console.log(this.id);
     this.axios
       .get(`/api/report/${this.id}`)
       .then(res => {
+        console.log(res);
         this.report = res.data;
         this.task = this.report.task;
-        console.log(this.report);
+        this.mark = JSON.parse(this.report.mark);
+        this.comment = JSON.parse(this.report.comment);
         this.content = JSON.parse(this.report.content);
         this.isLoading = false;
       })
@@ -75,21 +77,6 @@ export default {
     }
   },
   methods: {
-    evaluateReport() {
-      console.log(this.mark, this.comment);
-      this.axios
-        .put(`/api/report/evaluate/${this.id}`, {
-          mark: this.mark,
-          comment: this.comment
-        })
-        .then(res => {
-          console.log(res.data);
-          this.$message.success("提交成功");
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
     goBack() {
       this.$router.back();
     }

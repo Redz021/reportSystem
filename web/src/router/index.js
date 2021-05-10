@@ -13,6 +13,7 @@ const routes = [{
         path: '/login',
         name: 'Login',
         component: Login,
+        meta: { title: '登录' },
     },
     {
         path: '/student',
@@ -25,6 +26,7 @@ const routes = [{
                 name: 'StudentCourse',
                 meta: {
                     requireAuth: true,
+                    title: '我的课程',
                 },
                 component: (resolve) =>
                     require(['../views/student/StudentCourse.vue'], resolve),
@@ -34,6 +36,7 @@ const routes = [{
                 name: 'StudentSingleCourse',
                 meta: {
                     requireAuth: true,
+                    title: '课程详情',
                 },
                 component: (resolve) =>
                     require(['../views/student/StudentSingleCourse.vue'], resolve),
@@ -43,9 +46,20 @@ const routes = [{
                 name: 'StudentReport',
                 meta: {
                     requireAuth: true,
+                    title: '我的任务',
                 },
                 component: (resolve) =>
                     require(['../views/student/StudentReport.vue'], resolve),
+            },
+            {
+                path: 'evaluate/:id',
+                name: 'EvaluateReport',
+                meta: {
+                    requireAuth: true,
+                    title: '评阅结果',
+                },
+                component: (resolve) =>
+                    require(['../views/student/EvaluateReport.vue'], resolve),
             },
         ],
         meta: {
@@ -63,6 +77,7 @@ const routes = [{
                 name: 'TeacherCourse',
                 meta: {
                     requireAuth: true,
+                    title: '我的课程',
                 },
                 component: (resolve) =>
                     require(['../views/teacher/TeacherCourse.vue'], resolve),
@@ -72,6 +87,7 @@ const routes = [{
                 name: 'SingleCourse',
                 meta: {
                     requireAuth: true,
+                    title: '课程详情',
                 },
                 component: (resolve) =>
                     require(['../views/teacher/SingleCourse.vue'], resolve),
@@ -81,6 +97,7 @@ const routes = [{
                 name: 'TeacherReport',
                 meta: {
                     requireAuth: true,
+                    title: '查看报告',
                 },
                 component: (resolve) =>
                     require(['../views/teacher/TeacherReport.vue'], resolve),
@@ -90,6 +107,7 @@ const routes = [{
                 name: 'TeacherManage',
                 meta: {
                     requireAuth: true,
+                    title: '教师管理',
                 },
                 component: (resolve) =>
                     require(['../views/teacher/TeacherManage.vue'], resolve),
@@ -99,6 +117,7 @@ const routes = [{
                 name: 'StudentManage',
                 meta: {
                     requireAuth: true,
+                    title: '学生管理',
                 },
                 component: (resolve) =>
                     require(['../views/teacher/StudentManage.vue'], resolve),
@@ -108,6 +127,7 @@ const routes = [{
                 name: 'CourseManage',
                 meta: {
                     requireAuth: true,
+                    title: '课程管理',
                 },
                 component: (resolve) =>
                     require(['../views/teacher/CourseManage.vue'], resolve),
@@ -117,6 +137,7 @@ const routes = [{
                 name: 'MemberManage',
                 meta: {
                     requireAuth: true,
+                    title: '课程成员管理',
                 },
                 component: (resolve) =>
                     require(['../views/teacher/MemberManage.vue'], resolve),
@@ -143,6 +164,9 @@ router.beforeEach((to, from, next) => {
         } else {
             router.replace('/login') //重定向登录
         }
+    }
+    if (to.meta.title) {
+        document.title = to.meta.title
     }
     if (to.meta.requireAuth) {
         if (store.state.token) {

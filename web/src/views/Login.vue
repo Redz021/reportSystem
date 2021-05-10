@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <div>
     <div id="container"
          v-loading="isLoading">
       <el-card class="loginCard"
@@ -36,7 +36,7 @@
         </div>
       </el-card>
     </div>
-  </el-container>
+  </div>
 </template>
 <script>
 export default {
@@ -70,7 +70,7 @@ export default {
   created() {
     setTimeout(() => {
       this.isLoading = false;
-    }, 1000);
+    }, 300);
   },
   methods: {
     login() {
@@ -125,9 +125,9 @@ export default {
 </script>
 <style lang="less" scoped>
 #container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -145,8 +145,10 @@ export default {
   }
 }
 #container::before {
+  content: "";
+  position: absolute;
   background: url(../assets/bg.jpg);
-  z-index: -1;
+  filter: blur(10px);
   width: 100%;
   height: 100%;
 }

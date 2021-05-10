@@ -1,8 +1,10 @@
 const { Student, ScLink } = require('../models')
-
+const bcrypt = require('bcrypt')
+const config = require('../config')
 module.exports = {
-    create: (req, res) => {
-        const { sno, studentName, studentClass, password } = req.body
+    create: async(req, res) => {
+        const { sno, studentName, studentClass } = req.body
+        const password = await config.getEncryptedPassword(config.originalPassword)
         const student = new Student({ sno, studentName, studentClass, password })
         student
             .save()
@@ -30,13 +32,21 @@ module.exports = {
     },
     update: (req, res) => {
         const id = req.params.id
-        const { sno, studentName, studentClass, password } = req.body
-        Student.findByIdAndUpdate(id, { sno, studentName, studentClass, password })
+        const { sno, studentName, studentClass } = req.body
+        Student.findByIdAndUpdate(id, { sno, studentName, studentClass })
             .then((data) =>
                 data ?
                 res.send(data) :
                 res.status(404).send({ message: `无法更新id为${id}的对象` })
             )
+            .catch((err) => res.status(500).send(err))
+    },
+    updatePassword: async(req, res) => {
+        const id = req.params.id
+        const { password } = req.body
+        const pass = await config.getEncryptedPassword(password)
+        Student.findOneAndUpdate({ _id: id }, { $set: { password: pass } }, { new: true })
+            .then((data) => res.send(data))
             .catch((err) => res.status(500).send(err))
     },
     delete: (req, res) => {
@@ -58,6 +68,14 @@ module.exports = {
                     res.send(data)
                 )
             })
-            .catch((err) => res.status(500).senda(err))
+            .catch((err) => res.status(500).send(err))
+    },
+    resetPassword: async(req, res) => {
+        const id = req.params.id
+        const pass = await config.getEncryptedPassword(config.originalPassword)
+
+        Student.findOneAndUpdate({ _id: id }, { $set: { password: pass } }, { new: true })
+            .then((data) => res.send(data))
+            .catch((err) => res.status(500).send(err))
     },
 }

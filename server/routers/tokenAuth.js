@@ -9,7 +9,7 @@ module.exports.authMiddleware = async(req, res, next) => {
     if (!token) {
         return res.send({ code: -1, msg: '需要token' })
     }
-    const { id, lastlogout } = jwt.verify(token, config.secretKey)
+    const { id, lastlogout, admin } = jwt.verify(token, config.secretKey)
     if (!id) {
         return res.send({ code: -1, msg: 'token无效' })
     }
@@ -23,5 +23,6 @@ module.exports.authMiddleware = async(req, res, next) => {
     if (!req.user) {
         return res.send({ code: -1, msg: '请登录' })
     }
+    req.admin = admin
     await next()
 }

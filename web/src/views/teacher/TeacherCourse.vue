@@ -6,7 +6,7 @@
       <div class="course-tips"
            v-if="courses.length===0">当前无课程</div>
       <el-card shadow="hover"
-               class="course"
+               class="course-card"
                v-for="course in courses"
                :key="course.id">
         <div class="course-name"
@@ -15,7 +15,7 @@
             {{course.courseName}}
           </router-link>
         </div>
-        <div class="course-info">{{course.year}}学年</div>
+        <div class="course-info">{{course.teacher}}</div>
       </el-card>
     </div>
   </div>
@@ -39,6 +39,9 @@ export default {
       .get(`/api/course/?teacher=${this.user.id}`)
       .then(res => {
         this.courses = res.data;
+        for (let item of this.courses) {
+          item.teacher = item.teacher.map(item => item.teacherName).join("、");
+        }
         this.isLoading = false;
         console.log(res);
       })
@@ -65,7 +68,8 @@ a {
     color: #666;
     font-size: 24px;
   }
-  .course {
+  .course-card {
+    width: 33%;
     max-width: 300px;
     min-width: 200px;
     margin: 10px;

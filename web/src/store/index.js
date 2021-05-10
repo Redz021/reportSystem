@@ -26,6 +26,10 @@ export default new Vuex.Store({
             state.user = {}
             state.userType = ''
         },
+        UPDATEUSER(state, newUser) {
+            localStorage.setItem('user', JSON.stringify(newUser))
+            state.user = newUser
+        },
     },
     actions: {
         login(context, data) {

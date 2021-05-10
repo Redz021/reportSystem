@@ -19,7 +19,7 @@
                            label="课程名"></el-table-column>
           <el-table-column prop="year"
                            label="学年"></el-table-column>
-          <el-table-column prop="teacher.teacherName"
+          <el-table-column prop="teacherName"
                            label="教师"></el-table-column>
           <el-table-column label="操作"
                            width="100">
@@ -62,12 +62,12 @@
         </el-form-item>
         <el-form-item label="授课教师">
           <el-table stripe
+                    border
                     :data="teachers"
                     max-height="300"
-                    highlight-current-row
-                    @current-change="addTeacherChange">
-            <el-table-column type="index"
-                             width="40"></el-table-column>
+                    @selection-change="addTeacherChange">
+            <el-table-column type="selection"
+                             width="50"></el-table-column>
             <el-table-column property="tno"
                              label="工号"></el-table-column>
             <el-table-column property="teacherName"
@@ -111,6 +111,7 @@
         <el-form-item label="学年"
                       prop="year">
           <el-date-picker style="width: 100%;"
+                          size="mini"
                           value-format="yyyy"
                           v-model="updateForm.year"
                           type="year"
@@ -118,14 +119,14 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="授课教师">
-          <el-table stripe
+          <el-table ref="teacherTable"
+                    stripe
                     border
                     :data="teachers"
                     max-height="300"
-                    highlight-current-row
-                    @current-change="updateTeacherChange">
-            <el-table-column type="index"
-                             width="40"></el-table-column>
+                    @select="updateTeacherChange">
+            <el-table-column type="selection"
+                             width="50"></el-table-column>
             <el-table-column property="tno"
                              label="工号"></el-table-column>
             <el-table-column property="teacherName"
@@ -175,7 +176,10 @@ export default {
         courseName: [
           { required: true, message: "请输入课程名", trigger: "blur" }
         ],
-        year: [{ required: true, message: "请选择学年", trigger: "blur" }]
+        year: [{ required: true, message: "请选择学年", trigger: "blur" }],
+        teacher: [
+          { required: true, message: "请选择授课教师", trigger: "change" }
+        ]
       }
     };
   },
@@ -184,6 +188,13 @@ export default {
       .get("/api/course")
       .then(res => {
         this.courses = res.data;
+        for (let item of this.courses) {
+          let names = "";
+          for (let teacher of item.teacher) {
+            names += teacher.teacherName + " ";
+          }
+          item.teacherName = names;
+        }
         this.isLoading = false;
         console.log(res);
       })
@@ -201,18 +212,28 @@ export default {
   },
   methods: {
     addTeacherChange(val) {
-      this.addForm.teacher = val.id;
+      this.addForm.teacher = val.map(item => item.id);
+      console.log(this.addForm);
     },
-    updateTeacherChange(val) {
-      this.updateForm.teacher = val.id;
+    updateTeacherChange(val, row) {
+      this.updateForm.teacher = val.map(item => item.id);
     },
     showUpdate(row) {
       this.updateForm.id = row.id;
       this.updateForm.cno = row.cno;
       this.updateForm.courseName = row.courseName;
       this.updateForm.year = row.year;
-      this.updateForm.teacher = row.teacher.id;
+      this.updateForm.teacher = row.teacher.map(item => item._id);
       this.updateCourseVisible = true;
+      this.$nextTick(function() {
+        this.$refs["teacherTable"].clearSelection();
+        for (let item of this.teachers) {
+          if (this.updateForm.teacher.includes(item.id)) {
+            this.$refs["teacherTable"].selection.push(item);
+          }
+        }
+      });
+      console.log(this.updateForm);
     },
     showDelete(row) {
       this.delCourseVisible = true;
@@ -233,6 +254,13 @@ export default {
         .get("/api/course")
         .then(res => {
           this.courses = res.data;
+          for (let item of this.courses) {
+            let names = "";
+            for (let teacher of item.teacher) {
+              names += teacher.teacherName + " ";
+            }
+            item.teacherName = names;
+          }
         })
         .catch(err => {
           console.error(err);

@@ -9,7 +9,7 @@
                    @change="getCurrentStudents">
           <el-option v-for="course in courses"
                      :key="course.id"
-                     :label="course.courseName+'['+course.teacher.teacherName+']'"
+                     :label="course.courseName"
                      :value="course.id"></el-option>
         </el-select>
       </el-header>
@@ -18,8 +18,9 @@
           <el-tab-pane label="当前学生">
             <div class="table-header">
               <span>当前学生</span>
-              <el-button type="text"
-                         @click="deleteManyStudents"><i class="el-icon-delete"></i>从课程中批量删除</el-button>
+              <el-button type="primary"
+                         plain
+                         @click="deleteManyStudents"><i class="el-icon-delete"></i>批量删除</el-button>
             </div>
             <!-- <el-button type="text"><i class="el-icon-plus"></i>向课程内添加学生</el-button> -->
             <el-table stripe
@@ -52,7 +53,7 @@
             <el-table stripe
                       border
                       ref="addStudentTable"
-                      :data="students"
+                      :data="studentsFiltered"
                       max-height="600"
                       @selection-change="selectAddStudents">
               <el-table-column type="selection"
@@ -92,6 +93,11 @@ export default {
     };
   },
   computed: {
+    studentsFiltered: function() {
+      return this.students.filter(
+        item => !this.currentStudentIds.includes(item.id)
+      );
+    },
     currentStudentIds: function() {
       if (this.currentStudents.length === 0) return [];
       return this.currentStudents.map(item => item.id);
@@ -119,11 +125,7 @@ export default {
   },
   methods: {
     selectAddStudents(val) {
-      let studentsIds = val.map(item => item.id);
-      let students = studentsIds.filter(
-        item => !this.currentStudentIds.includes(item)
-      );
-      this.addStudents = students;
+      this.addStudents = val.map(item => item.id);
     },
     selectDeleteStudents(val) {
       let students = val.map(item => item.id);
