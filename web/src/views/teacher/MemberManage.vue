@@ -2,7 +2,7 @@
   <div>
     <Loading v-if="isLoading"></Loading>
     <el-container v-if="!isLoading">
-      <el-header>
+      <el-main>
         <span>当前课程：</span>
         <el-select v-model="currentCourse"
                    placeholder="选择课程"
@@ -12,8 +12,30 @@
                      :label="course.courseName"
                      :value="course.id"></el-option>
         </el-select>
-      </el-header>
-      <el-main>
+        <div style="margin: 10px 0;">
+          <span>当前学期：</span>
+          <el-date-picker style="width: 100px"
+                          value-format="yyyy"
+                          v-model="startYear"
+                          type="year"
+                          placeholder="学年"
+                          @change="getCurrentStudents">
+          </el-date-picker>
+          <span> 至 </span>
+          <el-input disabled
+                    style="width: 100px;"
+                    v-model="endYear"></el-input>
+          <span> 学年 </span>
+          <el-select class="term-pick"
+                     placeholder="学期"
+                     @change="getCurrentStudents"
+                     v-model="termChoice">
+            <el-option label="第一学期"
+                       value="第一学期"></el-option>
+            <el-option label="第二学期"
+                       value="第二学期"></el-option>
+          </el-select>
+        </div>
         <el-tabs type="border-card">
           <el-tab-pane label="当前学生">
             <div class="table-header">
@@ -42,7 +64,7 @@
                                label="姓名"></el-table-column>
             </el-table>
           </el-tab-pane>
-          <el-tab-pane :disabled="currentCourse?false:true"
+          <el-tab-pane :disabled="term&&currentCourse?false:true"
                        label="添加学生">
             <div class="table-header">
               <span>向当前课程中添加学生</span>
@@ -89,10 +111,22 @@ export default {
       students: [],
       currentStudents: [],
       deleteStudents: [],
-      addStudents: []
+      addStudents: [],
+      startYear: "",
+      termChoice: ""
     };
   },
   computed: {
+    term: function() {
+      if (this.startYear && this.endYear && this.termChoice) {
+        return `${this.startYear}至${this.endYear}学年${this.termChoice}`;
+      } else {
+        return "";
+      }
+    },
+    endYear: function() {
+      return this.startYear ? String(parseInt(this.startYear) + 1) : "";
+    },
     studentsFiltered: function() {
       return this.students.filter(
         item => !this.currentStudentIds.includes(item.id)
@@ -142,7 +176,8 @@ export default {
         this.axios
           .post("/api/scLink/students", {
             course: this.currentCourse,
-            students: this.addStudents
+            students: this.addStudents,
+            term: this.term
           })
           .then(res => {
             this.getCurrentStudents();
@@ -174,16 +209,21 @@ export default {
       }
     },
     getCurrentStudents() {
-      this.axios
-        .get(`/api/scLink/student/${this.currentCourse}`)
-        .then(res => {
-          console.log(res);
-          this.currentStudents = res.data;
-          this.$refs.addStudentTable.clearSelection();
-        })
-        .catch(err => {
-          console.error(err);
-        });
+      if (this.currentCourse && this.term) {
+        this.axios
+          // .get(`/api/scLink/student/${this.currentCourse}`)
+          .get("/api/scLink/students", {
+            params: { course: this.currentCourse, term: this.term }
+          })
+          .then(res => {
+            console.log(res);
+            this.currentStudents = res.data;
+            this.$refs.addStudentTable.clearSelection();
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      }
     },
     getStudents() {
       this.axios

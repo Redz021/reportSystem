@@ -28,6 +28,16 @@ module.exports = {
             .then((data) => res.send(data))
             .catch((err) => res.status(500).send(err))
     },
+    findByStudentAndTask: (req, res) => {
+        const { student, task } = req.query
+        Report.findOne({ student, task })
+            .populate({ path: 'task' })
+            .then((data) => res.send(data))
+            .catch((err) => {
+                console.log(err)
+                res.status(500).send(err)
+            })
+    },
     findById: (req, res) => {
         let id = req.params.id
         Report.findById(id)
@@ -51,11 +61,9 @@ module.exports = {
     },
     evaluate: (req, res) => {
         const id = req.params.id
-        let { mark, comment } = req.body
-        mark = JSON.stringify(mark)
-        comment = JSON.stringify(comment)
+        let { score } = req.body
 
-        Report.findOneAndUpdate({ _id: id }, { $set: { mark, comment, evaluated: true } }, { new: true })
+        Report.findOneAndUpdate({ _id: id }, { $set: { score, evaluated: true } }, { new: true })
             .then((data) => res.send(data))
             .catch((err) => {
                 console.log(err)

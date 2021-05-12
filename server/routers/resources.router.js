@@ -49,7 +49,8 @@ module.exports = (app) => {
                 res.send({ message: '创建成功' })
             })
             .catch((err) => {
-                res.status(500).send({ message: `创建失败:${err}` })
+                console.log(err)
+                res.send({ message: `创建失败:${err}` })
             })
     })
     app.use('/api/upload', router)

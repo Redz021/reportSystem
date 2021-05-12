@@ -101,7 +101,7 @@ export default {
     return {
       user: {},
       courses: [],
-      isCollapse: false,
+      isCollapse: true,
       updatePasswordVisible: false,
       updateForm: {
         newPassword: "",

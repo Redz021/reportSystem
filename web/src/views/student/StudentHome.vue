@@ -105,7 +105,7 @@ export default {
           }
         ]
       },
-      isCollapse: false,
+      isCollapse: true,
       updatePasswordVisible: false
     };
   },

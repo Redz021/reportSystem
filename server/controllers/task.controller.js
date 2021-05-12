@@ -6,23 +6,35 @@ module.exports = {
             res.status(400).send({ msg: '内容不能为空' })
             return
         }
-        let { course, title, format, comment, released, deadline } = req.body
+        let { course, title, format, comment, released, deadline, term } = req.body
         released = new Date(released)
         deadline = new Date(deadline)
-        console.log({ course, title, format, comment, released, deadline })
-        new Task({ course, title, format, comment, released, deadline })
+        console.log({ course, title, format, comment, released, deadline, term })
+        new Task({ course, title, format, comment, released, deadline, term })
             .save()
             .then((data) => res.send(data))
-            .catch((err) => res.status(500).send(err))
+            .catch((err) => {
+                console.log(err)
+                res.status(500).send(err)
+            })
     },
     findByCourse: (req, res) => {
         const course = req.query.course
             // console.log(course)
-        Task.findOne({ course })
+        Task.find({ course })
             .then((data) => {
                 return res.send(data)
             })
             .catch((err) => res.status(404).send(err))
+    },
+    findByCourseAndTerm: (req, res) => {
+        const { course, term } = req.query
+        Task.findOne({ course, term })
+            .then((data) => res.send(data))
+            .catch((err) => {
+                console.log(err)
+                res.status(500).send(err)
+            })
     },
     update: (req, res) => {
         const id = req.params.id

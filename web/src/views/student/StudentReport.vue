@@ -45,7 +45,7 @@ export default {
   created() {
     this.id = this.$route.params.id;
     this.axios
-      .get(`/api/report/${this.id}`)
+      .get(`/api/report/id/${this.id}`)
       .then(res => {
         this.report = res.data;
         this.task = this.report.task;

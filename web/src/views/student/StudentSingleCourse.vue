@@ -81,6 +81,7 @@ export default {
     return {
       isLoading: true,
       course: "",
+      term: "",
       student: "",
       reportId: "",
       evaluated: false,
@@ -89,14 +90,17 @@ export default {
   },
   created() {
     this.course = this.$route.params.id;
+    this.term = this.$route.query.term;
     this.student = this.$store.state.user.id;
     this.axios
-      .get("/api/task", { params: { course: this.course } })
+      .get("/api/task/student", {
+        params: { course: this.course, term: this.term }
+      })
       .then(res => {
         this.task = res.data;
         this.axios
-          .get("/api/report/", {
-            params: { student: this.student, course: this.course }
+          .get("/api/report/student", {
+            params: { student: this.student, task: this.task.id }
           })
           .then(res => {
             this.reportId = res.data.id;

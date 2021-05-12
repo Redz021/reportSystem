@@ -3,7 +3,7 @@
     <Loading v-if="isLoading"></Loading>
     <el-container v-else>
       <div class="notask-notify"
-           v-if="!task">
+           v-if="!tasks||tasks.length===0">
         <div style="font-size: 24px;">当前课程无已发布的任务</div>
         <el-button type="text"
                    @click="showAddTask">
@@ -16,7 +16,22 @@
                           content="当前任务"></el-page-header>
         </el-header>
         <el-main>
-          <div class="task-content">
+          <el-select v-model="currentTerm"
+                     style="margin-bottom: 10px;"
+                     placeholder="选择学期"
+                     @change="getTaskStudents">
+            <el-option v-for="item in taskTerms"
+                       :key="item"
+                       :label="item"
+                       :value="item"></el-option>
+          </el-select>
+          <el-divider direction="vertical"></el-divider>
+          <el-button type="text"
+                     @click="showAddTask">
+            <i class="el-icon-plus"></i>发布新任务
+          </el-button>
+          <div class="task-content"
+               v-if="task">
             <el-card class="task-card">
               <div slot="header"
                    class="task-header">
@@ -48,8 +63,9 @@
               </div>
               <div>
                 备注：
-                <div class="task-comment">
-                  {{task.comment}}
+                <div class="task-comment"
+                     v-html="task.comment">
+                  <!-- {{task.comment}} -->
                 </div>
               </div>
               <div>
@@ -79,6 +95,8 @@
                       <template slot-scope="scope">
                         <el-button type="text"
                                    @click="test(scope.row)">查看</el-button>
+                        <el-button type="text"
+                                   disabled>{{scope.row.evaluated?'已查看':'未查看'}}</el-button>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -103,7 +121,26 @@
                  :visible.sync="addTaskVisible">
         <el-form :model="addForm"
                  ref="addForm"
-                 :rules="rules">
+                 :rules="rules"
+                 label-position="top">
+          <el-form-item label="学期"
+                        prop="term">
+            <el-date-picker class="year-pick"
+                            value-format="yyyy"
+                            v-model="startYear"
+                            type="year"
+                            placeholder="学年">
+            </el-date-picker>
+            <span> 至 {{endYear}} 学年</span>
+            <el-select class="term-pick"
+                       placeholder="学期"
+                       v-model="term">
+              <el-option label="第一学期"
+                         value="第一学期"></el-option>
+              <el-option label="第二学期"
+                         value="第二学期"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="题目"
                         prop="title">
             <el-input type="text"
@@ -212,14 +249,16 @@ export default {
     return {
       isLoading: true,
       course: "",
-      task: {},
+      task: null,
+      tasks: null,
       reports: [],
       students: [],
       addForm: {
         title: "",
         paras: [],
         comment: "",
-        timeRange: []
+        timeRange: [],
+        term: ""
       },
       updateForm: {
         title: "",
@@ -234,17 +273,30 @@ export default {
           message: "请选择起止时间",
           trigger: "blur"
         },
-        comment: { required: true, message: "请输入备注信息", trigger: "blur" }
+        comment: { required: true, message: "请输入备注信息", trigger: "blur" },
+        term: { required: true, message: "请选择学期", trigger: "change" }
       },
       addTaskVisible: false,
-      updateTaskVisible: false
+      updateTaskVisible: false,
+
+      startYear: "",
+      term: "",
+      currentTerm: ""
     };
   },
   computed: {
+    taskTerms: function() {
+      return this.tasks ? this.tasks.map(item => item.term) : [];
+    },
+    endYear: function() {
+      return this.startYear ? String(parseInt(this.startYear) + 1) : "";
+    },
     submittedStudents: function() {
       return this.reports
         .filter(item => item.submitted)
-        .map(item => item.student);
+        .map(item => {
+          return { ...item.student, evaluated: item.evaluated };
+        });
     },
     unSubmittedStudents: function() {
       return this.students.filter(
@@ -261,7 +313,38 @@ export default {
       return JSON.parse(this.task.format);
     }
   },
+  watch: {
+    term: function() {
+      if (this.startYear && this.endYear && this.term) {
+        this.addForm.term = `${this.startYear}至${this.endYear}学年${this.term}`;
+        console.log(this.addForm);
+      }
+    },
+    currentTerm: function() {
+      for (let item of this.tasks) {
+        if (item.term === this.currentTerm) {
+          this.task = item;
+        }
+      }
+    }
+  },
   methods: {
+    getTaskStudents() {
+      this.axios
+        .get("/api/scLink/students", {
+          params: { course: this.course, term: this.currentTerm }
+        })
+        .then(async res => {
+          this.students = res.data;
+          const reports = await this.axios.get(
+            `/api/report/task/${this.task.id}`
+          );
+
+          this.reports = reports.data;
+          console.log(this.reports, this.students);
+        })
+        .catch(err => console.error(err));
+    },
     goBack() {
       this.$router.back();
     },
@@ -322,7 +405,8 @@ export default {
       this.axios
         .get("/api/task", { params: { course: this.course } })
         .then(res => {
-          this.task = res.data;
+          this.tasks = res.data;
+          this.task = null;
           console.log(res);
         })
         .catch(err => {
@@ -339,6 +423,7 @@ export default {
           data["comment"] = this.addForm.comment;
           data["released"] = this.addForm.timeRange[0];
           data["deadline"] = this.addForm.timeRange[1];
+          data["term"] = this.addForm.term;
           this.axios
             .post("/api/task", data)
             .then(res => {
@@ -377,20 +462,22 @@ export default {
     this.course = this.$route.params.id;
     this.axios
       .get("/api/task", { params: { course: this.course } })
-      .then(async res => {
-        this.task = res.data;
-        const students = await this.axios.get(
-          `/api/scLink/student/${this.course}`
-        );
-        this.students = students.data;
-        if (this.task) {
-          const reports = await this.axios.get(
-            `/api/report/task/${this.task.id}`
-          );
+      .then(res => {
+        console.log(res.data);
+        this.tasks = res.data;
+        // const students = await this.axios.get(
+        //   `/api/scLink/student/${this.course}`
+        // );
+        // this.students = students.data;
 
-          this.reports = reports.data;
-          console.log(this.reports, this.students);
-        }
+        // if (this.task) {
+        //   const reports = await this.axios.get(
+        //     `/api/report/task/${this.task.id}`
+        //   );
+
+        //   this.reports = reports.data;
+        //   console.log(this.reports, this.students);
+        // }
         this.isLoading = false;
       })
       .catch(err => {
@@ -435,5 +522,12 @@ export default {
   min-width: 600px;
   flex: 2;
   // border: 1px solid #ddd;
+}
+.year-pick {
+  max-width: 30%;
+}
+.term-pick {
+  max-width: 35%;
+  margin-left: 10%;
 }
 </style>

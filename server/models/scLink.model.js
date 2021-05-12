@@ -10,7 +10,9 @@ module.exports = (mongoose) => {
             ref: 'course',
             require: true,
         },
+        term: String,
     })
+    schema.index({ course: 1, student: 1 }, { unique: true })
     schema.method('toJSON', function() {
         const { __v, _id, ...object } = this.toObject()
         object.id = _id

@@ -7,41 +7,36 @@ module.exports = {
             return
         }
 
-        const scdata = req.body
-        const result = await ScLink.findOne(scdata)
-        if (!result) {
-            const scLink = new ScLink({
-                student: scdata.student,
-                course: scdata.course,
+        const { course, student, term } = req.body
+        new ScLink({ course, student, term })
+            .save()
+            .then((data) => res.send(data))
+            .catch((err) => {
+                console.log(err)
+                res.status(500).send(err)
             })
-            scLink
-                .save(scLink)
-                .then((data) => {
-                    res.send(data)
-                })
-                .catch((err) => {
-                    res.status(500).send({ msg: '添加失败', err })
-                })
-        } else {
-            res.send({ msg: '已存在该学生' })
-        }
     },
     getCourses: (req, res) => {
         const student = req.params.sid
         ScLink.find({ student })
             .populate({ path: 'course' })
             .then((data) => {
-                if (!data) {
-                    res.status(404).send({
-                        message: `未找到student为${student}的对象`,
+                // if (!data) {
+                //     res.status(404).send({
+                //         message: `未找到student为${student}的对象`,
+                //     })
+                // } else {
+                //     let courses = []
+                //     data.forEach((element) => {
+                //         courses.push(element['course'])
+                //     })
+                //     res.send(courses)
+                // }
+                res.send(
+                    data.map((item) => {
+                        return { course: item.course, term: item.term }
                     })
-                } else {
-                    let courses = []
-                    data.forEach((element) => {
-                        courses.push(element['course'])
-                    })
-                    res.send(courses)
-                }
+                )
             })
             .catch((err) => {
                 console.error(err)
@@ -72,6 +67,23 @@ module.exports = {
                     message: `查找course为${course}的对象时出现错误:${err}`,
                 })
             })
+    },
+    getStudentsByCourseAndTerm: (req, res) => {
+        if (!req.body) {
+            res.status(400).send({
+                msg: '删除的内容不能为空',
+            })
+            return
+        }
+        const course = req.query.course
+        const term = req.query.term
+
+        ScLink.find({ course, term })
+            .populate({ path: 'student' })
+            .then((data) => {
+                res.send(data.map((item) => item.student))
+            })
+            .catch((err) => res.status(500).send(err))
     },
     deleteStudent: (req, res) => {
         if (!req.body) {
@@ -124,19 +136,19 @@ module.exports = {
             res.status(400).send({ msg: '内容不能为空' })
             return
         }
-        const { course, students } = req.body
+        const { course, students, term } = req.body
         const insertData = []
         students.forEach((element) => {
-            insertData.push({ course, student: element })
+            insertData.push({ course, student: element, term })
         })
         ScLink.insertMany(insertData, { ordered: false })
             .then((data) => {
                 console.log(data)
+                res.send(data)
             })
             .catch((err) => {
                 console.log(err)
+                res.status(500).send(err)
             })
-
-        res.send({ msg: 'tested' })
     },
 }

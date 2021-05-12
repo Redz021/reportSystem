@@ -10,14 +10,14 @@
       <el-card shadow="hover"
                class="course-card"
                v-for="course in courses"
-               :key="course.id">
+               :key="course.course.id">
         <div class="course-name"
              slot="header">
-          <router-link :to="{name: 'StudentSingleCourse',params:{id:course.id}}">
-            {{course.courseName}}
+          <router-link :to="{name: 'StudentSingleCourse',params:{id:course.course.id}, query:{term: course.term}}">
+            {{course.course.courseName}}
           </router-link>
         </div>
-        <div class="course-info">{{course.year}}学年</div>
+        <div class="course-info">{{course.term}}</div>
       </el-card>
     </div>
   </div>
@@ -39,6 +39,7 @@ export default {
     this.axios
       .get(`/api/scLink/course/${this.user.id}`)
       .then(res => {
+        console.log(res.data);
         this.courses = res.data;
         this.isLoading = false;
       })
