@@ -63,7 +63,8 @@
           </el-menu-item>
         </el-menu>
         <el-main class="main">
-          <router-view @update="updateUser"></router-view>
+          <router-view class="router-view"
+                       @update="updateUser"></router-view>
         </el-main>
       </el-container>
     </el-container>

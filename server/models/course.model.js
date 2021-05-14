@@ -5,7 +5,7 @@ module.exports = (mongoose) => {
             require: true,
         }, //课程号
         courseName: String, //课程名
-        year: String, //开课学年
+        courseImage: String,
         teacher: [{
             type: mongoose.Schema.ObjectId,
             ref: 'teacher',

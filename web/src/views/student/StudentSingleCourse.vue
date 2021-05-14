@@ -1,12 +1,18 @@
 <template>
   <div>
     <Loading v-if="isLoading"></Loading>
-    <div v-else>
+    <div v-else
+         class="main-content">
+      <el-header style="display: flex; align-items: center;">
+        <el-page-header @back="goBack"
+                        content="课程详情"></el-page-header>
+      </el-header>
       <div class="notask-notify"
            v-if="!task">
         <div style="font-size: 24px;">当前课程无已发布的任务</div>
       </div>
-      <el-container v-else>
+      <el-container v-else
+                    class="main-content">
         <el-header style="display: flex; align-items: center;">
           <el-page-header @back="goBack"
                           content="课程详情"></el-page-header>
@@ -192,5 +198,10 @@ export default {
   padding: 10px;
   margin: 10px 0;
   overflow: scroll;
+}
+.main-content {
+  max-width: 1200px;
+  min-width: 800px;
+  margin: auto;
 }
 </style>

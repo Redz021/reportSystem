@@ -17,8 +17,6 @@
                            label="课程号"></el-table-column>
           <el-table-column prop="courseName"
                            label="课程名"></el-table-column>
-          <el-table-column prop="year"
-                           label="学年"></el-table-column>
           <el-table-column prop="teacherName"
                            label="教师"></el-table-column>
           <el-table-column label="操作"
@@ -42,6 +40,7 @@
                :visible.sync="addCourseVisible">
       <el-form :model="addForm"
                ref="addForm"
+               label-position="top"
                :rules="rules">
         <el-form-item label="课程号"
                       prop="cno">
@@ -51,14 +50,26 @@
                       prop="courseName">
           <el-input v-model="addForm.courseName"></el-input>
         </el-form-item>
-        <el-form-item label="学年"
-                      prop="year">
-          <el-date-picker style="width: 100%;"
-                          value-format="yyyy"
-                          v-model="addForm.year"
-                          type="year"
-                          placeholder="选择年">
-          </el-date-picker>
+        <el-form-item label="课程图片">
+          <el-upload ref="courseImage"
+                     :action="uploadUrl"
+                     :http-request="httpRequest"
+                     class="avatar-uploader"
+                     :show-file-list="false"
+                     :on-success="handleAvatarSuccess"
+                     :before-upload="beforeAvatarUpload">
+            <img v-if="addForm.courseImage"
+                 :src="addForm.courseImage"
+                 class="avatar">
+            <i v-else
+               class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+          <el-button type="text"
+                     v-if="addForm.courseImage"
+                     @click="deleteImage('addForm')">
+            <i class="el-icon-delete"></i>
+            删除
+          </el-button>
         </el-form-item>
         <el-form-item label="授课教师">
           <el-table stripe
@@ -99,6 +110,7 @@
                :visible.sync="updateCourseVisible">
       <el-form :model="updateForm"
                ref="updateForm"
+               label-position="top"
                :rules="rules">
         <el-form-item label="课程号"
                       prop="cno">
@@ -108,15 +120,26 @@
                       prop="courseName">
           <el-input v-model="updateForm.courseName"></el-input>
         </el-form-item>
-        <el-form-item label="学年"
-                      prop="year">
-          <el-date-picker style="width: 100%;"
-                          size="mini"
-                          value-format="yyyy"
-                          v-model="updateForm.year"
-                          type="year"
-                          placeholder="选择学年">
-          </el-date-picker>
+        <el-form-item label="课程图片">
+          <el-upload ref="courseImage"
+                     :action="uploadUrl"
+                     :http-request="httpRequest"
+                     class="avatar-uploader"
+                     :show-file-list="false"
+                     :on-success="handleAvatarSuccess"
+                     :before-upload="beforeAvatarUpload">
+            <img v-if="updateForm.courseImage"
+                 :src="updateForm.courseImage"
+                 class="avatar">
+            <i v-else
+               class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+          <el-button type="text"
+                     v-if="updateForm.courseImage"
+                     @click="deleteImage('updateForm')">
+            <i class="el-icon-delete"></i>
+            删除
+          </el-button>
         </el-form-item>
         <el-form-item label="授课教师">
           <el-table ref="teacherTable"
@@ -163,13 +186,15 @@ export default {
         cno: "",
         courseName: "",
         year: "",
-        teacher: ""
+        teacher: "",
+        courseImage: ""
       },
       updateForm: {
         id: "",
         cno: "",
         courseName: "",
-        year: ""
+        year: "",
+        courseImage: ""
       },
       rules: {
         cno: [{ required: true, message: "请输入课程号", trigger: "blur" }],
@@ -180,7 +205,8 @@ export default {
         teacher: [
           { required: true, message: "请选择授课教师", trigger: "change" }
         ]
-      }
+      },
+      uploadUrl: "http://localhost:3000/api/public/image"
     };
   },
   created() {
@@ -211,6 +237,52 @@ export default {
       });
   },
   methods: {
+    deleteImage(form) {
+      // this.$refs["courseImage"].clearFiles();
+      const image = this.$refs[form].courseImage.match(/\d*\.jpg/)[0];
+      this.axios
+        .delete(`/api/public/image/${image}`)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      this.$refs[form].courseImage = "";
+    },
+    httpRequest(param) {
+      const image = param.file;
+      const formData = new FormData();
+      formData.append("image", image);
+      this.axios
+        .post(this.uploadUrl, formData, {
+          headers: { "content-type": "multipart/form-data" }
+        })
+        .then(res => {
+          // console.log(res);
+          this.addForm.courseImage = res.data.data[0];
+        })
+        .catch(err => {
+          console.error(err);
+          this.$message.error("上传失败");
+        });
+    },
+    handleAvatarSuccess(res, file) {
+      // this.addForm.courseImage = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
+
     addTeacherChange(val) {
       this.addForm.teacher = val.map(item => item.id);
       console.log(this.addForm);
@@ -222,8 +294,8 @@ export default {
       this.updateForm.id = row.id;
       this.updateForm.cno = row.cno;
       this.updateForm.courseName = row.courseName;
-      this.updateForm.year = row.year;
       this.updateForm.teacher = row.teacher.map(item => item._id);
+      this.updateForm.courseImage = row.courseImage;
       this.updateCourseVisible = true;
       this.$nextTick(function() {
         this.$refs["teacherTable"].clearSelection();
@@ -269,12 +341,12 @@ export default {
     addCourse() {
       this.$refs["addForm"].validate(valid => {
         if (valid) {
-          const { cno, courseName, year, teacher } = this.addForm;
+          const { cno, courseName, teacher, courseImage } = this.addForm;
           if (!teacher) {
             this.$message({ message: "请选择授课教师", type: "warning" });
           } else {
             this.axios
-              .post("/api/course", { cno, courseName, year, teacher })
+              .post("/api/course", { cno, courseName, teacher, courseImage })
               .then(res => {
                 console.log(res);
                 this.$message({ message: "添加成功", type: "success" });
@@ -291,7 +363,7 @@ export default {
     updateCourse() {
       this.$refs["updateForm"].validate(valid => {
         if (valid) {
-          const { cno, courseName, year, teacher } = this.updateForm;
+          const { cno, courseName, courseImage, teacher } = this.updateForm;
           if (!teacher) {
             this.$message({ message: "请选择授课教师", type: "warning" });
           } else {
@@ -299,7 +371,7 @@ export default {
               .put(`/api/course/${this.updateForm.id}`, {
                 cno,
                 courseName,
-                year,
+                courseImage,
                 teacher
               })
               .then(res => {
@@ -333,4 +405,27 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 </style>

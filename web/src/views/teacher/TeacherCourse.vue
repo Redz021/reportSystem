@@ -9,13 +9,16 @@
                class="course-card"
                v-for="course in courses"
                :key="course.id">
-        <div class="course-name"
-             slot="header">
-          <router-link :to="{name:'SingleCourse',params:{id:course.id}}">
+        <router-link :to="{name:'SingleCourse',params:{id:course.id}}">
+          <img :src="course.courseImage"
+               :alt="course.courseName"
+               class="course-image">
+          <el-divider></el-divider>
+          <div class="course-name">
             {{course.courseName}}
-          </router-link>
-        </div>
-        <div class="course-info">{{course.teacher}}</div>
+          </div>
+          <div class="course-info">{{course.teacher}}</div>
+        </router-link>
       </el-card>
     </div>
   </div>
@@ -73,8 +76,16 @@ a {
     max-width: 300px;
     min-width: 200px;
     margin: 10px;
+    .course-image {
+      height: 200px;
+      margin: auto;
+      display: block;
+    }
     .course-name {
       font-size: 24px;
+    }
+    .course-info {
+      margin-top: 10px;
     }
   }
 }

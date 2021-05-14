@@ -1,7 +1,12 @@
 <template>
   <div>
     <Loading v-if="isLoading"></Loading>
-    <el-container v-else>
+    <el-container v-else
+                  class="main-content">
+      <el-header style="display: flex;align-items: center;">
+        <el-page-header @back="goBack"
+                        content="详情"></el-page-header>
+      </el-header>
       <div class="notask-notify"
            v-if="!tasks||tasks.length===0">
         <div style="font-size: 24px;">当前课程无已发布的任务</div>
@@ -10,7 +15,8 @@
           <i class="el-icon-plus"></i>发布任务
         </el-button>
       </div>
-      <el-container v-else>
+      <el-container v-else
+                    class="main-content">
         <el-header style="display: flex;align-items: center;">
           <el-page-header @back="goBack"
                           content="当前任务"></el-page-header>
@@ -96,7 +102,7 @@
                         <el-button type="text"
                                    @click="test(scope.row)">查看</el-button>
                         <el-button type="text"
-                                   disabled>{{scope.row.evaluated?'已查看':'未查看'}}</el-button>
+                                   disabled>{{scope.row.evaluated?'已打分':'未打分'}}</el-button>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -529,5 +535,10 @@ export default {
 .term-pick {
   max-width: 35%;
   margin-left: 10%;
+}
+.main-content {
+  max-width: 1200px;
+  min-width: 800px;
+  margin: auto;
 }
 </style>

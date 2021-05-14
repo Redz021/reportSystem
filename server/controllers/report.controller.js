@@ -42,6 +42,7 @@ module.exports = {
         let id = req.params.id
         Report.findById(id)
             .populate({ path: 'task' })
+            .populate({ path: 'student' })
             .then((data) => res.send(data))
             .catch((err) => res.status(500).send(err))
     },

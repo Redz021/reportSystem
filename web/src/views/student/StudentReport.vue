@@ -1,7 +1,8 @@
 <template>
   <div>
     <Loading v-if="isLoading"></Loading>
-    <el-container v-else>
+    <el-container v-else
+                  class="main-content">
       <el-header style="display: flex; align-items: center;">
         <el-page-header @back="goBack"
                         :content="task.title"></el-page-header>
@@ -96,4 +97,9 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.main-content {
+  max-width: 1200px;
+  min-width: 800px;
+  margin: auto;
+}
 </style>

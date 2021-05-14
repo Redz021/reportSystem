@@ -6,8 +6,8 @@ module.exports = {
             res.status(400).send({ msg: '内容不能为空' })
             return
         }
-        const { cno, courseName, year, teacher } = req.body
-        new Course({ cno, courseName, year, teacher })
+        const { cno, courseName, teacher, courseImage } = req.body
+        new Course({ cno, courseName, teacher, courseImage })
             .save()
             .then((data) => res.send(data))
             .catch((err) => res.status(500).send(err))
@@ -38,8 +38,8 @@ module.exports = {
         let newData = {
             cno: req.body.cno,
             courseName: req.body.courseName,
-            year: req.body.year,
             teacher: req.body.teacher,
+            courseImage: req.body.courseImage,
         }
         Course.findOneAndUpdate({ _id: id }, { $set: newData }, { new: true })
             .then((data) => res.send(data))

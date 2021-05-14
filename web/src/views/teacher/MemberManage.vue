@@ -185,6 +185,7 @@ export default {
             console.log(res);
           })
           .catch(err => {
+            this.$message.warning("添加学生失败");
             console.error(err);
           });
       }

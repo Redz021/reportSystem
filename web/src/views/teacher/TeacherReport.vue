@@ -1,28 +1,36 @@
 <template>
   <div>
     <Loading v-if="isLoading"></Loading>
-    <el-container v-else>
+    <el-container v-else
+                  style="max-width: 1200px;min-width: 800px; margin: auto;">
+      <el-backtop></el-backtop>
       <el-header style="display: flex; align-items: center;">
         <el-page-header @back="goBack"
                         :content="task.title"></el-page-header>
       </el-header>
       <el-main>
-        <!-- <el-collapse>
+        <div style="margin-bottom: 10px">{{report.student.studentClass}} {{report.student.studentName}} {{report.student.sno}}</div>
+        <!-- <el-divider></el-divider> -->
+
+        <el-collapse>
           <el-collapse-item v-for="para in paras"
                             :key="para.key"
                             :title="para.value">
-            <div class="content-item"
+            <div class="report-title">{{para.value}}</div>
+            <div class="report-content"
                  v-html="content[para.key]">
             </div>
           </el-collapse-item>
-        </el-collapse> -->
-        <div v-for="para in paras"
+        </el-collapse>
+
+        <!-- <div v-for="para in paras"
              :key="para.key">
-          <h3>{{para.value}}</h3>
-          <div class="content-item"
+          <div class="report-title">{{para.value}}</div>
+          <div class="report-content"
                v-html="content[para.key]">
           </div>
-        </div>
+        </div> -->
+        <!-- <el-divider></el-divider> -->
         <table class="score-table">
           <tr>
             <th colspan="2">考核项目</th>
@@ -296,6 +304,7 @@ export default {
         .then(res => {
           console.log(res.data);
           this.$message.success("提交成功");
+          setTimeout(() => this.$router.back(), 800);
         })
         .catch(err => {
           console.log(err);
@@ -308,11 +317,15 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.content-item {
-  border: 1px solid #9b9b9b;
+.report-title {
+  font-size: 24px;
+  margin: 10px 0;
+}
+.report-content {
+  border: 1px solid #bbbbbb;
   border-radius: 4px;
   background: #fafafa;
-  padding: 30px;
+  padding: 20px 10px;
 }
 .mark-part {
   display: flex;
@@ -327,6 +340,7 @@ export default {
   }
 }
 .score-table {
+  margin-top: 50px;
   border-collapse: collapse;
   th,
   td {
