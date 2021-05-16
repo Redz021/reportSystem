@@ -38,15 +38,16 @@ export default {
   },
   created() {
     this.user = this.$store.state.user;
+    console.log(this.user);
     this.axios
       .get(`/api/course/?teacher=${this.user.id}`)
       .then(res => {
+        console.log(res);
         this.courses = res.data;
         for (let item of this.courses) {
           item.teacher = item.teacher.map(item => item.teacherName).join("、");
         }
         this.isLoading = false;
-        console.log(res);
       })
       .catch(err => {
         console.error(err);
@@ -66,6 +67,9 @@ a {
 .course-container {
   height: 100%;
   display: flex;
+  max-width: 1200px;
+  min-width: 800px;
+  margin: auto;
   .course-tips {
     margin: auto;
     color: #666;

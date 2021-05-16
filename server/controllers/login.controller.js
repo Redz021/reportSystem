@@ -7,7 +7,7 @@ module.exports = {
         //判空
 
         const { userNum, password } = req.body
-        let user = await Student.findOne({ sno: userNum })
+        let user = await Student.findOne({ sno: userNum }).select('+password')
         if (user) {
             //按照学生处理
             if (await bcrypt.compare(password, user.password)) {
@@ -19,7 +19,7 @@ module.exports = {
                 return res.send({ code: -1, msg: '密码错误' })
             }
         }
-        user = await Teacher.findOne({ tno: userNum })
+        user = await Teacher.findOne({ tno: userNum }).select('+password')
         if (user) {
             //按照教师处理
             if (await bcrypt.compare(password, user.password)) {

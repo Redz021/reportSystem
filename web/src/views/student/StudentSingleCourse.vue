@@ -3,12 +3,13 @@
     <Loading v-if="isLoading"></Loading>
     <div v-else
          class="main-content">
-      <el-header style="display: flex; align-items: center;">
+      <el-header v-if="tasks.length===0"
+                 style="display: flex; align-items: center;">
         <el-page-header @back="goBack"
                         content="课程详情"></el-page-header>
       </el-header>
       <div class="notask-notify"
-           v-if="!task">
+           v-if="tasks.length===0">
         <div style="font-size: 24px;">当前课程无已发布的任务</div>
       </div>
       <el-container v-else
@@ -18,7 +19,15 @@
                           content="课程详情"></el-page-header>
         </el-header>
         <el-main>
-          <el-card class="task-card">
+          <el-select v-model="currentTitle"
+                     style="margin-bottom: 10px;">
+            <el-option v-for="item in taskTitles"
+                       :key="item"
+                       :label="item"
+                       :value="item"></el-option>
+          </el-select>
+          <el-card class="task-card"
+                   v-if="task">
             <div slot="header"
                  class="task-header">
               <span>{{task.title}}</span>
@@ -37,8 +46,8 @@
             </div>
             <div class="detail-item">
               备注：
-              <div class="task-comment">
-                {{task.comment}}
+              <div class="task-comment"
+                   v-html="task.comment">
               </div>
             </div>
             <div class="detail-item">
@@ -61,15 +70,16 @@
                 {{isExpired?'已截止':hasReport?'去修改':'去完成'}}
               </el-button>
             </router-link> -->
-              <el-button type="primary"
-                         plain
-                         :disabled="isExpired"
-                         @click="toReport">
-                {{isExpired?'已截止':hasReport?'去修改':'去完成'}}
-              </el-button>
               <el-button v-if="evaluated"
                          type="success"
                          @click="toEvaluate">查看结果</el-button>
+              <el-button v-else
+                         type="primary"
+                         plain
+                         :disabled="isExpired"
+                         @click="toReport">
+                {{isSubmitted?'查看':isExpired?'已截止':hasReport?'去修改':'去完成'}}
+              </el-button>
             </div>
           </el-card>
         </el-main>
@@ -91,7 +101,10 @@ export default {
       student: "",
       reportId: "",
       evaluated: false,
-      task: null
+      isSubmitted: false,
+      task: null,
+      tasks: null,
+      currentTitle: ""
     };
   },
   created() {
@@ -103,18 +116,9 @@ export default {
         params: { course: this.course, term: this.term }
       })
       .then(res => {
-        this.task = res.data;
-        this.axios
-          .get("/api/report/student", {
-            params: { student: this.student, task: this.task.id }
-          })
-          .then(res => {
-            this.reportId = res.data.id;
-            this.evaluated = res.data.evaluated;
-          })
-          .catch(err => {
-            console.error(err);
-          });
+        this.tasks = res.data;
+        console.log(this.tasks);
+
         this.isLoading = false;
       })
       .catch(err => {
@@ -122,21 +126,49 @@ export default {
       });
   },
   computed: {
+    taskTitles: function() {
+      return this.tasks ? this.tasks.map(item => item.title) : [];
+    },
     isExpired: function() {
-      return moment().isAfter(moment(this.task.deadline));
+      return this.task ? moment().isAfter(moment(this.task.deadline)) : "";
     },
     hasReport: function() {
-      console.log("report:" + this.reportId);
       return this.reportId ? true : false;
     },
     released: function() {
-      return moment(this.task.released).format("yyyy-MM-DD HH:mm");
+      return this.task
+        ? moment(this.task.released).format("yyyy-MM-DD HH:mm")
+        : "";
     },
     deadline: function() {
-      return moment(this.task.deadline).format("yyyy-MM-DD HH:mm");
+      return this.task
+        ? moment(this.task.deadline).format("yyyy-MM-DD HH:mm")
+        : "";
     },
     paras: function() {
       return this.task ? JSON.parse(this.task.format) : [];
+    }
+  },
+  watch: {
+    currentTitle: function() {
+      for (let item of this.tasks) {
+        if (item.title === this.currentTitle) {
+          this.task = item;
+          this.axios
+            .get("/api/report/student", {
+              params: { student: this.student, task: this.task.id }
+            })
+            .then(res => {
+              console.log(res);
+              this.reportId = res.data.id;
+              this.evaluated = res.data.evaluated;
+              this.isSubmitted = res.data.submitted;
+            })
+            .catch(err => {
+              console.error(err);
+            });
+        }
+      }
     }
   },
   methods: {

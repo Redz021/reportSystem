@@ -1,7 +1,8 @@
 <template>
   <div>
     <Loading v-if="isLoading"></Loading>
-    <el-container v-if="!isLoading">
+    <el-container v-if="!isLoading"
+                  class="main-content">
       <el-header>
         <el-button style="height:100%;"
                    type="text"
@@ -37,7 +38,8 @@
     <!--添加对话框-->
     <el-dialog title="添加"
                width="400px"
-               :visible.sync="addCourseVisible">
+               :visible.sync="addCourseVisible"
+               :close-on-click-modal="false">
       <el-form :model="addForm"
                ref="addForm"
                label-position="top"
@@ -54,15 +56,15 @@
           <el-upload ref="courseImage"
                      :action="uploadUrl"
                      :http-request="httpRequest"
-                     class="avatar-uploader"
+                     class="cover-uploader"
                      :show-file-list="false"
                      :on-success="handleAvatarSuccess"
                      :before-upload="beforeAvatarUpload">
             <img v-if="addForm.courseImage"
                  :src="addForm.courseImage"
-                 class="avatar">
+                 class="cover">
             <i v-else
-               class="el-icon-plus avatar-uploader-icon"></i>
+               class="el-icon-plus cover-uploader-icon"></i>
           </el-upload>
           <el-button type="text"
                      v-if="addForm.courseImage"
@@ -96,7 +98,8 @@
     <!-- 删除对话框 -->
     <el-dialog title="删除"
                width="400px"
-               :visible.sync="delCourseVisible">
+               :visible.sync="delCourseVisible"
+               :close-on-click-modal="false">
       <span>确定要删除吗？</span>
       <span slot="footer">
         <el-button @click="delCourseVisible = false">取 消</el-button>
@@ -121,18 +124,18 @@
           <el-input v-model="updateForm.courseName"></el-input>
         </el-form-item>
         <el-form-item label="课程图片">
-          <el-upload ref="courseImage"
+          <el-upload ref="courseImageUpload"
                      :action="uploadUrl"
-                     :http-request="httpRequest"
-                     class="avatar-uploader"
+                     :http-request="httpRequestUpdate"
+                     class="cover-uploader"
                      :show-file-list="false"
                      :on-success="handleAvatarSuccess"
                      :before-upload="beforeAvatarUpload">
             <img v-if="updateForm.courseImage"
                  :src="updateForm.courseImage"
-                 class="avatar">
+                 class="cover">
             <i v-else
-               class="el-icon-plus avatar-uploader-icon"></i>
+               class="el-icon-plus cover-uploader-icon"></i>
           </el-upload>
           <el-button type="text"
                      v-if="updateForm.courseImage"
@@ -239,7 +242,7 @@ export default {
   methods: {
     deleteImage(form) {
       // this.$refs["courseImage"].clearFiles();
-      const image = this.$refs[form].courseImage.match(/\d*\.jpg/)[0];
+      const image = this[form].courseImage.match(/\d*\.jpg/)[0];
       this.axios
         .delete(`/api/public/image/${image}`)
         .then(res => {
@@ -248,7 +251,7 @@ export default {
         .catch(err => {
           console.error(err);
         });
-      this.$refs[form].courseImage = "";
+      this[form].courseImage = "";
     },
     httpRequest(param) {
       const image = param.file;
@@ -261,6 +264,22 @@ export default {
         .then(res => {
           // console.log(res);
           this.addForm.courseImage = res.data.data[0];
+        })
+        .catch(err => {
+          console.error(err);
+          this.$message.error("上传失败");
+        });
+    },
+    httpRequestUpdate(param) {
+      const image = param.file;
+      const formData = new FormData();
+      formData.append("image", image);
+      this.axios
+        .post(this.uploadUrl, formData, {
+          headers: { "content-type": "multipart/form-data" }
+        })
+        .then(res => {
+          this.updateForm.courseImage = res.data.data[0];
         })
         .catch(err => {
           console.error(err);
@@ -297,6 +316,7 @@ export default {
       this.updateForm.teacher = row.teacher.map(item => item._id);
       this.updateForm.courseImage = row.courseImage;
       this.updateCourseVisible = true;
+      console.log(this.updateForm);
       this.$nextTick(function() {
         this.$refs["teacherTable"].clearSelection();
         for (let item of this.teachers) {
@@ -405,17 +425,18 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.avatar-uploader .el-upload {
+.cover-uploader {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  width: 178px;
 }
-.avatar-uploader .el-upload:hover {
+.cover-uploader:hover {
   border-color: #409eff;
 }
-.avatar-uploader-icon {
+.cover-uploader-icon {
   font-size: 28px;
   color: #8c939d;
   width: 178px;
@@ -423,9 +444,14 @@ export default {
   line-height: 178px;
   text-align: center;
 }
-.avatar {
+.cover {
   width: 178px;
   height: 178px;
   display: block;
+}
+.main-content {
+  max-width: 1200px;
+  min-width: 800px;
+  margin: auto;
 }
 </style>

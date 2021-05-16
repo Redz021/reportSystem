@@ -12,7 +12,7 @@ axios.defaults.baseURL = 'http://localhost:3000'
 axios.interceptors.request.use(
     (config) => {
         // Do something before request is sent
-        config.headers.Authorization = localStorage.getItem('token')
+        config.headers.Authorization = store.state.token
         return config
     },
     (error) => {

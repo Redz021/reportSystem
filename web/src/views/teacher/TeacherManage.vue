@@ -1,7 +1,8 @@
 <template>
   <div>
     <Loading v-if="isLoading"></Loading>
-    <el-container v-if="!isLoading">
+    <el-container v-if="!isLoading"
+                  class="main-content">
       <el-header>
         <el-button style="height:100%;"
                    type="text"
@@ -26,7 +27,7 @@
               <el-button @click="showDelete(scope.row)"
                          type="text"
                          size="small">删除</el-button>
-              <el-button @click="resetPassword(scope.row)"
+              <el-button @click="showReset(scope.row)"
                          type="text"
                          size="small">重置密码</el-button>
             </template>
@@ -37,6 +38,7 @@
       <!--添加对话框-->
       <el-dialog title="添加"
                  width="400px"
+                 :close-on-click-modal="false"
                  :visible.sync="addTeacherVisible">
         <el-form :model="addForm"
                  ref="addForm"
@@ -50,16 +52,6 @@
                         prop="teacherName">
             <el-input v-model="addForm.teacherName"></el-input>
           </el-form-item>
-          <el-form-item label="密码"
-                        prop="password">
-            <el-input type="password"
-                      v-model="addForm.password"></el-input>
-          </el-form-item>
-          <el-form-item label="确认密码"
-                        prop="passwordConfirm">
-            <el-input type="password"
-                      v-model="addForm.passwordConfirm"></el-input>
-          </el-form-item>
         </el-form>
         <div slot="footer"
              class="dialog-footer">
@@ -71,6 +63,7 @@
       <!-- 删除对话框 -->
       <el-dialog title="删除"
                  width="400px"
+                 :close-on-click-modal="false"
                  :visible.sync="delTeacherVisible">
         <span>确定要删除吗？</span>
         <span slot="footer">
@@ -79,9 +72,22 @@
                      @click="deleteTeacher">确 定</el-button>
         </span>
       </el-dialog>
+
+      <el-dialog title="注意"
+                 width="400px"
+                 :close-on-click-modal="false"
+                 :visible.sync="resetPasswordVisible">
+        <span>确定要重置吗？</span>
+        <span slot="footer">
+          <el-button @click="cancelReset">取 消</el-button>
+          <el-button type="danger"
+                     @click="resetPassword">确 定</el-button>
+        </span>
+      </el-dialog>
       <!-- 编辑对话框 -->
       <el-dialog title="编辑"
                  width="400px"
+                 :close-on-click-modal="false"
                  :visible.sync="updateTeacherVisible">
         <el-form :model="updateForm"
                  :rules="rules"
@@ -94,10 +100,6 @@
           <el-form-item label="姓名"
                         prop="teacherName">
             <el-input v-model="updateForm.teacherName"></el-input>
-          </el-form-item>
-          <el-form-item label="密码"
-                        prop="password">
-            <el-input v-model="updateForm.password"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer"
@@ -124,7 +126,9 @@ export default {
       addTeacherVisible: false,
       delTeacherVisible: false,
       updateTeacherVisible: false,
+      resetPasswordVisible: false,
       delTeacherId: "",
+      resetId: "",
       addForm: {
         tno: "",
         teacherName: "",
@@ -162,12 +166,26 @@ export default {
     };
   },
   methods: {
-    resetPassword(row) {
-      const id = row.id;
+    showReset(row) {
+      this.resetId = row.id;
+      this.resetPasswordVisible = true;
+    },
+    cancelReset() {
+      this.resetId = "";
+      this.resetPasswordVisible = false;
+    },
+    resetPassword() {
       this.axios
-        .put(`/api/teacher/reset/${id}`)
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
+        .put(`/api/teacher/reset/${this.resetId}`)
+        .then(res => {
+          this.$message.success("重置成功");
+          this.resetPasswordVisible = false;
+          console.log(res);
+        })
+        .catch(err => {
+          this.$message.error("重置失败");
+          console.log(err);
+        });
     },
     showUpdate(row) {
       this.updateForm.id = row.id;
@@ -258,4 +276,9 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.main-content {
+  max-width: 1200px;
+  min-width: 800px;
+  margin: auto;
+}
 </style>

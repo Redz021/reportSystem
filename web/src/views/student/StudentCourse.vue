@@ -63,6 +63,9 @@ a {
 .course-container {
   height: 100%;
   display: flex;
+  max-width: 1200px;
+  min-width: 800px;
+  margin: auto;
   .course-tips {
     margin: auto;
     color: #666;

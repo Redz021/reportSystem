@@ -29,7 +29,7 @@ module.exports = {
     },
     findByCourseAndTerm: (req, res) => {
         const { course, term } = req.query
-        Task.findOne({ course, term })
+        Task.find({ course, term })
             .then((data) => res.send(data))
             .catch((err) => {
                 console.log(err)

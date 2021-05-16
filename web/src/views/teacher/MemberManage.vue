@@ -1,9 +1,10 @@
 <template>
   <div>
     <Loading v-if="isLoading"></Loading>
-    <el-container v-if="!isLoading">
+    <el-container v-if="!isLoading"
+                  class="main-content">
       <el-main>
-        <span>当前课程：</span>
+        <span>课程：</span>
         <el-select v-model="currentCourse"
                    placeholder="选择课程"
                    @change="getCurrentStudents">
@@ -13,7 +14,7 @@
                      :value="course.id"></el-option>
         </el-select>
         <div style="margin: 10px 0;">
-          <span>当前学期：</span>
+          <span>开课学期：</span>
           <el-date-picker style="width: 100px"
                           value-format="yyyy"
                           v-model="startYear"
@@ -42,7 +43,7 @@
               <span>当前学生</span>
               <el-button type="primary"
                          plain
-                         @click="deleteManyStudents"><i class="el-icon-delete"></i>批量删除</el-button>
+                         @click="showDeleteMany"><i class="el-icon-delete"></i>批量删除</el-button>
             </div>
             <!-- <el-button type="text"><i class="el-icon-plus"></i>向课程内添加学生</el-button> -->
             <el-table stripe
@@ -95,6 +96,17 @@
         </el-tabs>
 
       </el-main>
+      <el-dialog title="注意"
+                 width="400px"
+                 :close-on-click-modal="false"
+                 :visible.sync="deleteManyStudentVisible">
+        <span>确定要删除吗？</span>
+        <span slot="footer">
+          <el-button @click="deleteManyStudentVisible = false">取 消</el-button>
+          <el-button type="danger"
+                     @click="deleteManyStudent">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-container>
   </div>
 </template>
@@ -113,7 +125,8 @@ export default {
       deleteStudents: [],
       addStudents: [],
       startYear: "",
-      termChoice: ""
+      termChoice: "",
+      deleteManyStudentVisible: false
     };
   },
   computed: {
@@ -190,24 +203,27 @@ export default {
           });
       }
     },
-    deleteManyStudents() {
+    showDeleteMany() {
       if (this.deleteStudents.length === 0) {
         this.$message({ message: "请选择要删除的学生", type: "warning" });
       } else {
-        console.log(this.currentCourse, this.deleteStudents);
-        this.axios
-          .delete("/api/scLink/students", {
-            data: { course: this.currentCourse, students: this.deleteStudents }
-          })
-          .then(res => {
-            this.$message({ message: "删除成功", type: "success" });
-            console.log(res);
-            this.getCurrentStudents();
-          })
-          .catch(err => {
-            console.error(err);
-          });
+        this.deleteManyStudentVisible = true;
       }
+    },
+    deleteManyStudent() {
+      this.axios
+        .delete("/api/scLink/students", {
+          data: { course: this.currentCourse, students: this.deleteStudents }
+        })
+        .then(res => {
+          this.$message({ message: "删除成功", type: "success" });
+          this.deleteManyStudentVisible = false;
+          console.log(res);
+          this.getCurrentStudents();
+        })
+        .catch(err => {
+          console.error(err);
+        });
     },
     getCurrentStudents() {
       if (this.currentCourse && this.term) {
@@ -264,5 +280,10 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
+}
+.main-content {
+  max-width: 1200px;
+  min-width: 800px;
+  margin: auto;
 }
 </style>

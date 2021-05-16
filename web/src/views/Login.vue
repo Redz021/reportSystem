@@ -25,6 +25,8 @@
                    @click="passwordVisible"></i>
               </el-input>
             </el-form-item>
+            <el-switch v-model="rememberMe"
+                       active-text="记住我"></el-switch>
             <el-form-item style="text-align: center;">
               <el-button type="success"
                          @click="login"
@@ -63,6 +65,7 @@ export default {
           }
         ]
       },
+      rememberMe: false,
       visible: false,
       isLoading: true
     };
@@ -87,7 +90,8 @@ export default {
               this.$store.dispatch("login", {
                 token,
                 user,
-                userType: "student"
+                userType: "student",
+                rememberMe: this.rememberMe
               });
               this.$router.replace("/student");
               console.log(res.data);
@@ -95,7 +99,8 @@ export default {
               this.$store.dispatch("login", {
                 token,
                 user,
-                userType: "teacher"
+                userType: "teacher",
+                rememberMe: this.rememberMe
               });
               this.$router.replace("/teacher");
               console.log(res.data);

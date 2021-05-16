@@ -6,7 +6,7 @@ module.exports = (mongoose) => {
             require: true,
         },
         studentName: String,
-        password: String,
+        password: { type: String, select: false },
         studentClass: String,
         _lastlogout: Number,
     }, {

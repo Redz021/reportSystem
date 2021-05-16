@@ -2,7 +2,7 @@
   <div>
     <Loading v-if="isLoading"></Loading>
     <el-container v-else
-                  style="max-width: 1200px;min-width: 800px; margin: auto;">
+                  class="main-content">
       <el-backtop></el-backtop>
       <el-header style="display: flex; align-items: center;">
         <el-page-header @back="goBack"
@@ -348,5 +348,10 @@ export default {
     text-align: center;
     padding: 10px 5px;
   }
+}
+.main-content {
+  max-width: 1200px;
+  min-width: 800px;
+  margin: auto;
 }
 </style>

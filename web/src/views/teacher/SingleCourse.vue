@@ -3,7 +3,8 @@
     <Loading v-if="isLoading"></Loading>
     <el-container v-else
                   class="main-content">
-      <el-header style="display: flex;align-items: center;">
+      <el-header style="display: flex;align-items: center;"
+                 v-if="!tasks||tasks.length===0">
         <el-page-header @back="goBack"
                         content="详情"></el-page-header>
       </el-header>
@@ -24,9 +25,17 @@
         <el-main>
           <el-select v-model="currentTerm"
                      style="margin-bottom: 10px;"
-                     placeholder="选择学期"
-                     @change="getTaskStudents">
+                     placeholder="选择学期">
             <el-option v-for="item in taskTerms"
+                       :key="item"
+                       :label="item"
+                       :value="item"></el-option>
+          </el-select>
+          <el-divider direction="vertical"></el-divider>
+          <el-select v-model="currentTitle"
+                     placeholder="选择题目"
+                     @change="getTaskStudents">
+            <el-option v-for="item in taskTitles"
                        :key="item"
                        :label="item"
                        :value="item"></el-option>
@@ -124,6 +133,7 @@
       </el-container>
       <el-dialog title="发布任务"
                  width="400px"
+                 :close-on-click-modal="false"
                  :visible.sync="addTaskVisible">
         <el-form :model="addForm"
                  ref="addForm"
@@ -166,9 +176,10 @@
           </el-form-item>
           <el-form-item label="备注"
                         prop="comment">
-            <el-input type="textarea"
+            <!-- <el-input type="textarea"
                       autosize
-                      v-model="addForm.comment"></el-input>
+                      v-model="addForm.comment"></el-input> -->
+            <Editor v-model="addForm.comment"></Editor>
           </el-form-item>
           <el-form-item :label="'章节'+(index+1)"
                         :key="para.key"
@@ -194,6 +205,7 @@
       </el-dialog>
       <el-dialog title="修改任务"
                  width="400px"
+                 :close-on-click-modal="false"
                  :visible.sync="updateTaskVisible">
         <el-form ref="updateForm"
                  :model="updateForm"
@@ -216,9 +228,10 @@
           </el-form-item>
           <el-form-item label="备注"
                         prop="comment">
-            <el-input type="textarea"
+            <!-- <el-input type="textarea"
                       autosize
-                      v-model="updateForm.comment"></el-input>
+                      v-model="updateForm.comment"></el-input> -->
+            <Editor v-model="updateForm.comment"></Editor>
           </el-form-item>
           <el-form-item :label="'章节'+(index+1)"
                         :key="para.key"
@@ -247,10 +260,11 @@
 </template>
 <script>
 import Loading from "@/components/Loading";
+import Editor from "@/components/Editor";
 import moment from "moment";
 export default {
   name: "SingleCourse",
-  components: { Loading },
+  components: { Loading, Editor },
   data() {
     return {
       isLoading: true,
@@ -287,12 +301,19 @@ export default {
 
       startYear: "",
       term: "",
-      currentTerm: ""
+      currentTerm: "",
+      currentTitle: "",
+      filteredTasks: null
     };
   },
   computed: {
+    taskTitles: function() {
+      return this.filteredTasks
+        ? this.filteredTasks.map(item => item.title)
+        : [];
+    },
     taskTerms: function() {
-      return this.tasks ? this.tasks.map(item => item.term) : [];
+      return this.tasks ? [...new Set(this.tasks.map(item => item.term))] : [];
     },
     endYear: function() {
       return this.startYear ? String(parseInt(this.startYear) + 1) : "";
@@ -327,8 +348,18 @@ export default {
       }
     },
     currentTerm: function() {
-      for (let item of this.tasks) {
-        if (item.term === this.currentTerm) {
+      // for (let item of this.tasks) {
+      //   if (item.term === this.currentTerm) {
+      //     this.task = item;
+      //   }
+      // }
+      this.filteredTasks = this.tasks.filter(
+        item => item.term === this.currentTerm
+      );
+    },
+    currentTitle: function() {
+      for (let item of this.filteredTasks) {
+        if (item.title === this.currentTitle) {
           this.task = item;
         }
       }
@@ -336,20 +367,22 @@ export default {
   },
   methods: {
     getTaskStudents() {
-      this.axios
-        .get("/api/scLink/students", {
-          params: { course: this.course, term: this.currentTerm }
-        })
-        .then(async res => {
-          this.students = res.data;
-          const reports = await this.axios.get(
-            `/api/report/task/${this.task.id}`
-          );
+      this.$nextTick(() => {
+        this.axios
+          .get("/api/scLink/students", {
+            params: { course: this.course, term: this.currentTerm }
+          })
+          .then(async res => {
+            this.students = res.data;
+            const reports = await this.axios.get(
+              `/api/report/task/${this.task.id}`
+            );
 
-          this.reports = reports.data;
-          console.log(this.reports, this.students);
-        })
-        .catch(err => console.error(err));
+            this.reports = reports.data;
+            console.log(this.reports, this.students);
+          })
+          .catch(err => console.error(err));
+      });
     },
     goBack() {
       this.$router.back();
@@ -374,7 +407,7 @@ export default {
       this.axios
         .delete(`/api/task/${this.task.id}`)
         .then(res => {
-          this.getTask();
+          this.getTasks();
           this.$message.success("删除成功");
           console.log(res);
         })
@@ -396,6 +429,8 @@ export default {
             })
             .then(res => {
               this.getTask();
+              this.currentTerm = "";
+              this.currentTitle = "";
               this.$message.success("修改成功");
               this.updateTaskVisible = false;
               console.log(res);
@@ -419,6 +454,20 @@ export default {
           console.error(err);
         });
     },
+    getTasks() {
+      this.task = null;
+      this.tasks = null;
+      this.axios
+        .get("/api/task", { params: { course: this.course } })
+        .then(res => {
+          console.log(res.data);
+          this.tasks = res.data;
+          this.isLoading = false;
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
     addTask() {
       this.$refs["addForm"].validate(valid => {
         if (valid) {
@@ -435,6 +484,8 @@ export default {
             .then(res => {
               this.getTask();
               this.addTaskVisible = false;
+              this.currentTerm = "";
+              this.currentTitle = "";
               this.$message.success("发布成功");
               console.log(res);
             })
@@ -471,19 +522,6 @@ export default {
       .then(res => {
         console.log(res.data);
         this.tasks = res.data;
-        // const students = await this.axios.get(
-        //   `/api/scLink/student/${this.course}`
-        // );
-        // this.students = students.data;
-
-        // if (this.task) {
-        //   const reports = await this.axios.get(
-        //     `/api/report/task/${this.task.id}`
-        //   );
-
-        //   this.reports = reports.data;
-        //   console.log(this.reports, this.students);
-        // }
         this.isLoading = false;
       })
       .catch(err => {
@@ -513,21 +551,14 @@ export default {
   margin: 10px 0;
   overflow: scroll;
 }
-.task-content {
-  display: flex;
-  flex-wrap: wrap;
-}
 .tag-group {
   margin: 10px 0;
 }
 .task-card {
-  min-width: 350px;
-  flex: 1;
+  width: 100%;
 }
 .reports {
-  min-width: 600px;
-  flex: 2;
-  // border: 1px solid #ddd;
+  width: 100%;
 }
 .year-pick {
   max-width: 30%;

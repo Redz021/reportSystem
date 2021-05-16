@@ -13,4 +13,7 @@
   height: 100%;
   width: 100%;
 }
+.el-main {
+  background: #fbfbfb;
+}
 </style>

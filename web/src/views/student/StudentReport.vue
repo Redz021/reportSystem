@@ -19,8 +19,10 @@
         </el-collapse>
       </el-main>
       <el-footer>
-        <el-button @click="save">保存</el-button>
+        <el-button @click="save"
+                   :disabled="report.submitted">保存</el-button>
         <el-button @click="submit"
+                   :disabled="report.submitted"
                    type="primary">提交</el-button>
       </el-footer>
     </el-container>
@@ -70,6 +72,7 @@ export default {
         .then(res => {
           console.log(res);
           this.$message.success("提交成功");
+          this.$router.back();
         })
         .catch(err => {
           console.error(err);
