@@ -22,6 +22,7 @@
                   class="student-table"
                   :data="students"
                   max-height="600"
+                  :default-sort="{prop: 'sno', order: 'ascending'}"
                   border
                   @selection-change="handleSelectionChange">
           <el-table-column type="selection"

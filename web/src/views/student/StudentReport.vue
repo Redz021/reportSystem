@@ -22,7 +22,7 @@
         <el-button @click="save"
                    :disabled="report.submitted">保存</el-button>
         <el-button @click="submit"
-                   :disabled="report.submitted"
+                   :disabled="report.submitted||!saved"
                    type="primary">提交</el-button>
       </el-footer>
     </el-container>
@@ -42,7 +42,8 @@ export default {
       report: null,
       task: null,
       content: {},
-      isClear: false
+      isClear: false,
+      saved: false
     };
   },
   created() {
@@ -85,6 +86,7 @@ export default {
         .then(res => {
           console.log(res);
           this.$notify({ message: "保存成功" });
+          this.saved = true;
         })
         .catch(err => {
           console.error(err);

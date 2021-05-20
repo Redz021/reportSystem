@@ -177,7 +177,7 @@
             <td>结构合理、条理一般（2-3）</td>
             <td>结构不合理、条理不清晰（0-1）</td>
             <td>
-              <el-input-number v-model="score.report.structure"
+              <el-input-number v-model="score.report.reasonable"
                                :min="0"
                                :max="4"></el-input-number>
             </td>
@@ -193,7 +193,14 @@
       </el-main>
       <el-footer>
         <el-button type="primary"
-                   @click="evaluateReport">提交</el-button>
+                   @click="evaluateReport">
+          提交
+        </el-button>
+        <el-button :disabled="!report.evaluated"
+                   type="success"
+                   @click="exportTable">
+          导出计分表
+        </el-button>
       </el-footer>
     </el-container>
   </div>
@@ -250,7 +257,7 @@ export default {
           //图表规范（4）
           chart: 0,
           //结构合理（4）
-          structure: 0
+          reasonable: 0
         }
       }
     };
@@ -288,7 +295,7 @@ export default {
         this.score.report.syntax +
         this.score.report.format +
         this.score.report.chart +
-        this.score.report.structure
+        this.score.report.reasonable
       );
     },
     paras: function() {
@@ -304,10 +311,25 @@ export default {
         .then(res => {
           console.log(res.data);
           this.$message.success("提交成功");
-          setTimeout(() => this.$router.back(), 800);
+
+          // setTimeout(() => this.$router.back(), 800);
         })
         .catch(err => {
           console.log(err);
+        });
+    },
+    exportTable() {
+      //尝试导出文档
+      const scoreData = { ...this.score, total: this.totalScore };
+      this.axios
+        .post("/api/export/evaluate", {
+          student: `${this.report.student.sno}${this.report.student.studentName}`,
+          task: `${this.task.title}`,
+          score: scoreData
+        })
+        .then(res => {
+          console.log(res.data);
+          window.location.href = res.data;
         });
     },
     goBack() {
