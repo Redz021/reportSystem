@@ -102,9 +102,9 @@
                  :visible.sync="deleteManyStudentVisible">
         <span>确定要删除吗？</span>
         <span slot="footer">
-          <el-button @click="deleteManyStudentVisible = false">取 消</el-button>
+          <el-button @click="deleteManyStudentVisible = false">取消</el-button>
           <el-button type="danger"
-                     @click="deleteManyStudent">确 定</el-button>
+                     @click="deleteManyStudent">确定</el-button>
         </span>
       </el-dialog>
     </el-container>

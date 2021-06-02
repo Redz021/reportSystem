@@ -11,7 +11,8 @@
       <el-main>
         <div style="margin-bottom: 10px">{{report.student.studentClass}} {{report.student.studentName}} {{report.student.sno}}</div>
         <!-- <el-divider></el-divider> -->
-
+        <el-button type="text"
+                   @click="getPdf">下载PDF附件</el-button>
         <el-collapse>
           <el-collapse-item v-for="para in paras"
                             :key="para.key"
@@ -199,7 +200,7 @@
         <el-button :disabled="!report.evaluated"
                    type="success"
                    @click="exportTable">
-          导出计分表
+          导出评分表
         </el-button>
       </el-footer>
     </el-container>
@@ -303,6 +304,9 @@ export default {
     }
   },
   methods: {
+    getPdf() {
+      window.location.href = this.report.pdf;
+    },
     evaluateReport() {
       this.axios
         .put(`/api/report/evaluate/${this.id}`, {
@@ -311,7 +315,7 @@ export default {
         .then(res => {
           console.log(res.data);
           this.$message.success("提交成功");
-
+          this.report.evaluated = true;
           // setTimeout(() => this.$router.back(), 800);
         })
         .catch(err => {

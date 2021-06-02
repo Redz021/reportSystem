@@ -71,4 +71,14 @@ module.exports = {
                 res.status(500).send(err)
             })
     },
+    upload: (req, res) => {
+        const id = req.params.id
+        const { pdf } = req.body
+        Report.findOneAndUpdate({ _id: id }, { $set: { pdf } }, { new: true })
+            .then((data) => res.send(data))
+            .catch((err) => {
+                console.error(err)
+                res.status(500).send(err)
+            })
+    },
 }

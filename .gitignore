@@ -2,6 +2,7 @@
 node_modules/
 *.xlsx
 *.xls
+*.docx
 *.jpg
 *.png
 *.jpeg

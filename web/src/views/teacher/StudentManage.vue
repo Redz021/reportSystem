@@ -78,9 +78,9 @@
         </el-form>
         <div slot="footer"
              class="dialog-footer">
-          <el-button @click="addStudentVisible = false">取 消</el-button>
+          <el-button @click="addStudentVisible = false">取消</el-button>
           <el-button type="primary"
-                     @click="addStudent">确 定</el-button>
+                     @click="addStudent">确定</el-button>
         </div>
       </el-dialog>
       <!-- 删除对话框 -->
@@ -90,9 +90,9 @@
                  :visible.sync="delStudentVisible">
         <span>确定要删除吗？</span>
         <span slot="footer">
-          <el-button @click="delStudentVisible = false">取 消</el-button>
+          <el-button @click="delStudentVisible = false">取消</el-button>
           <el-button type="danger"
-                     @click="deleteStudent">确 定</el-button>
+                     @click="deleteStudent">确定</el-button>
         </span>
       </el-dialog>
 
@@ -102,9 +102,9 @@
                  :visible.sync="resetPasswordVisible">
         <span>确定要重置吗？</span>
         <span slot="footer">
-          <el-button @click="cancelReset">取 消</el-button>
+          <el-button @click="cancelReset">取消</el-button>
           <el-button type="danger"
-                     @click="resetPassword">确 定</el-button>
+                     @click="resetPassword">确定</el-button>
         </span>
       </el-dialog>
       <!-- 编辑对话框 -->
@@ -129,9 +129,9 @@
         </el-form>
         <div slot="footer"
              class="dialog-footer">
-          <el-button @click="updateStudentVisible = false">取 消</el-button>
+          <el-button @click="updateStudentVisible = false">取消</el-button>
           <el-button type="primary"
-                     @click="updateStudent">确 定</el-button>
+                     @click="updateStudent">确定</el-button>
         </div>
       </el-dialog>
       <!-- 批量删除确定对话框 -->
@@ -141,9 +141,9 @@
                  :visible.sync="delManyStudentVisible">
         <span>确定要删除吗？</span>
         <span slot="footer">
-          <el-button @click="delManyStudentVisible = false">取 消</el-button>
+          <el-button @click="delManyStudentVisible = false">取消</el-button>
           <el-button type="danger"
-                     @click="deleteManyStudent">确 定</el-button>
+                     @click="deleteManyStudent">确定</el-button>
         </span>
       </el-dialog>
       <!-- 上传模板对话框 -->

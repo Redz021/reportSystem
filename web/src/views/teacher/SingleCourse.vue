@@ -104,6 +104,10 @@
                             :data="submittedStudents">
                     <el-table-column prop="sno"
                                      label="学号"></el-table-column>
+                    <el-table-column prop="studentClass"
+                                     :filters="submittedStudentClassesFilter"
+                                     :filter-method="classFilterHandler"
+                                     label="班级"></el-table-column>
                     <el-table-column prop="studentName"
                                      label="姓名"></el-table-column>
                     <el-table-column label="报告">
@@ -122,6 +126,10 @@
                             :data="unSubmittedStudents">
                     <el-table-column prop="sno"
                                      label="学号"></el-table-column>
+                    <el-table-column prop="studentClass"
+                                     :filters="studentClassesFilter"
+                                     :filter-method="classFilterHandler"
+                                     label="班级"></el-table-column>
                     <el-table-column prop="studentName"
                                      label="姓名"></el-table-column>
                   </el-table>
@@ -307,6 +315,24 @@ export default {
     };
   },
   computed: {
+    submittedStudentClassesFilter: function() {
+      let s = new Set(this.submittedStudents.map(item => item.studentClass));
+      let classes = [...s];
+      let res = [];
+      for (let item of classes) {
+        res.push({ text: item, value: item });
+      }
+      return res;
+    },
+    studentClassesFilter: function() {
+      let s = new Set(this.students.map(item => item.studentClass));
+      let classes = [...s];
+      let res = [];
+      for (let item of classes) {
+        res.push({ text: item, value: item });
+      }
+      return res;
+    },
     taskTitles: function() {
       return this.filteredTasks
         ? this.filteredTasks.map(item => item.title)
@@ -366,6 +392,10 @@ export default {
     }
   },
   methods: {
+    classFilterHandler(value, row, column) {
+      const property = column["property"];
+      return row[property] === value;
+    },
     getTaskStudents() {
       this.$nextTick(() => {
         this.axios

@@ -90,9 +90,9 @@
       </el-form>
       <div slot="footer"
            class="dialog-footer">
-        <el-button @click="addCourseVisible = false">取 消</el-button>
+        <el-button @click="addCourseVisible = false">取消</el-button>
         <el-button type="primary"
-                   @click="addCourse">确 定</el-button>
+                   @click="addCourse">确定</el-button>
       </div>
     </el-dialog>
     <!-- 删除对话框 -->
@@ -102,9 +102,9 @@
                :close-on-click-modal="false">
       <span>确定要删除吗？</span>
       <span slot="footer">
-        <el-button @click="delCourseVisible = false">取 消</el-button>
+        <el-button @click="delCourseVisible = false">取消</el-button>
         <el-button type="danger"
-                   @click="deleteCourse">确 定</el-button>
+                   @click="deleteCourse">确定</el-button>
       </span>
     </el-dialog>
     <!-- 编辑对话框 -->
@@ -162,9 +162,9 @@
       </el-form>
       <div slot="footer"
            class="dialog-footer">
-        <el-button @click="updateCourseVisible = false">取 消</el-button>
+        <el-button @click="updateCourseVisible = false">取消</el-button>
         <el-button type="primary"
-                   @click="updateCourse">确 定</el-button>
+                   @click="updateCourse">确定</el-button>
       </div>
     </el-dialog>
   </div>

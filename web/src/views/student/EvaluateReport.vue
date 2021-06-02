@@ -141,7 +141,7 @@
             <td>结构合理、条理一般（2-3）</td>
             <td>结构不合理、条理不清晰（0-1）</td>
             <td>
-              {{score.report.structure}}
+              {{score.report.reasonable}}
             </td>
           </tr>
           <tr>
@@ -209,7 +209,7 @@ export default {
         this.score.report.syntax +
         this.score.report.format +
         this.score.report.chart +
-        this.score.report.structure
+        this.score.report.reasonable
       );
     }
   },

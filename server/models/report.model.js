@@ -9,6 +9,7 @@ module.exports = (mongoose) => {
         submit: { type: Date, default: Date.now },
         submitted: { type: Boolean, default: false },
         evaluated: { type: Boolean, default: false },
+        pdf: { type: String, default: '' },
     })
     schema.index({ task: 1, student: 1 }, { unique: true })
     schema.method('toJSON', function() {

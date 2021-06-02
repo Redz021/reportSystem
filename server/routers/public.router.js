@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage })
 module.exports = (app) => {
-    router.post('/image', upload.single('image'), async(req, res) => {
+    router.post('/image', upload.single('image'), (req, res) => {
         res.json({
             // errno 即错误代码，0 表示没有错误。
             //       如果有错误，errno != 0，可通过下文中的监听函数 fail 拿到该错误码进行自定义处理
@@ -33,6 +33,16 @@ module.exports = (app) => {
         })
     })
     router.delete('/image/:file', (req, res) => {
+        const file = req.params.file
+        fs.unlinkSync(`./public/${req.user._id}/${file}`)
+        res.send('success')
+    })
+    router.post('/pdf', upload.single('pdf'), (req, res) => {
+        res.send(
+            `http://localhost:3000/public/${req.user._id}/${req.file.filename}`
+        )
+    })
+    router.delete('/pdf/:file', (req, res) => {
         const file = req.params.file
         fs.unlinkSync(`./public/${req.user._id}/${file}`)
         res.send('success')

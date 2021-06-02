@@ -27,6 +27,27 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
+      <el-dialog :visible.sync="confirmUser"
+                 :close-on-click-modal="false"
+                 width="500px">
+        <div slot="title">
+          <span>确认操作</span>
+        </div>
+        <el-form ref="confirmForm"
+                 :rules="rules"
+                 :model="confirmForm">
+          <el-form-item label="输入旧密码来证明身份"
+                        prop="oldPassword">
+            <el-input type="password"
+                      v-model="confirmForm.oldPassword"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer">
+          <el-button @click="confirmUser=false">取消</el-button>
+          <el-button @click="confirmPassword"
+                     type="primary">确定</el-button>
+        </div>
+      </el-dialog>
       <el-container>
         <el-menu class="menu"
                  default-active="1"
@@ -108,7 +129,13 @@ export default {
         newPassword: "",
         confirmPassword: ""
       },
+      confirmForm: {
+        oldPassword: ""
+      },
       rules: {
+        oldPassword: [
+          { required: true, message: "请输入密码", trigger: "blur" }
+        ],
         newPassword: [
           { required: true, message: "输入新密码", trigger: "blur" }
         ],
@@ -127,10 +154,29 @@ export default {
             trigger: "change"
           }
         ]
-      }
+      },
+      confirmUser: false
     };
   },
   methods: {
+    confirmPassword() {
+      this.$refs["confirmForm"].validate(valid => {
+        if (valid) {
+          this.axios
+            .post(`/api/teacher/confirm/${this.user.id}`, {
+              password: this.confirmForm.oldPassword
+            })
+            .then(res => {
+              console.log(res);
+              this.confirmUser = false;
+              this.updatePasswordVisible = true;
+            })
+            .catch(err => {
+              this.$message.error("密码错误");
+            });
+        }
+      });
+    },
     updatePassword() {
       this.$refs["updateForm"].validate(valid => {
         if (valid) {
@@ -150,7 +196,8 @@ export default {
       });
     },
     showUpdatePassword() {
-      this.updatePasswordVisible = true;
+      // this.updatePasswordVisible = true;
+      this.confirmUser = true;
     },
     logout() {
       this.$store.dispatch("logout");

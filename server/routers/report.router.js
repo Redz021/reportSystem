@@ -8,6 +8,7 @@ module.exports = (app) => {
     router.get('/student', Report.findByStudentAndTask)
     router.put('/:id', Report.modifyContent)
     router.put('/submit/:id', Report.submit)
+    router.put('/upload/:id', Report.upload)
     router.use((req, res, next) => {
         if (req.admin) next()
         else res.status(403).send()

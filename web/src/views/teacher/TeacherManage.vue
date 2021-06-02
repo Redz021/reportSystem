@@ -55,9 +55,9 @@
         </el-form>
         <div slot="footer"
              class="dialog-footer">
-          <el-button @click="addTeacherVisible = false">取 消</el-button>
+          <el-button @click="addTeacherVisible = false">取消</el-button>
           <el-button type="primary"
-                     @click="addTeacher">确 定</el-button>
+                     @click="addTeacher">确定</el-button>
         </div>
       </el-dialog>
       <!-- 删除对话框 -->
@@ -67,9 +67,9 @@
                  :visible.sync="delTeacherVisible">
         <span>确定要删除吗？</span>
         <span slot="footer">
-          <el-button @click="delTeacherVisible = false">取 消</el-button>
+          <el-button @click="delTeacherVisible = false">取消</el-button>
           <el-button type="danger"
-                     @click="deleteTeacher">确 定</el-button>
+                     @click="deleteTeacher">确定</el-button>
         </span>
       </el-dialog>
 
@@ -79,9 +79,9 @@
                  :visible.sync="resetPasswordVisible">
         <span>确定要重置吗？</span>
         <span slot="footer">
-          <el-button @click="cancelReset">取 消</el-button>
+          <el-button @click="cancelReset">取消</el-button>
           <el-button type="danger"
-                     @click="resetPassword">确 定</el-button>
+                     @click="resetPassword">确定</el-button>
         </span>
       </el-dialog>
       <!-- 编辑对话框 -->
@@ -104,9 +104,9 @@
         </el-form>
         <div slot="footer"
              class="dialog-footer">
-          <el-button @click="updateTeacherVisible = false">取 消</el-button>
+          <el-button @click="updateTeacherVisible = false">取消</el-button>
           <el-button type="primary"
-                     @click="updateTeacher">确 定</el-button>
+                     @click="updateTeacher">确定</el-button>
         </div>
       </el-dialog>
     </el-container>

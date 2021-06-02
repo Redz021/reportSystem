@@ -33,7 +33,7 @@ require('./routers/scLink.router')(app)
 require('./routers/resources.router')(app)
 require('./routers/task.router')(app)
 require('./routers/report.router')(app)
-require('./routers/image.router')(app)
+require('./routers/public.router')(app)
 require('./routers/export.router')(app)
 
 const PORT = 3000 || process.env.PORT

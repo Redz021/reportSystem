@@ -78,4 +78,14 @@ module.exports = {
             .then((data) => res.send(data))
             .catch((err) => res.status(500).send(err))
     },
+    confirm: async(req, res) => {
+        const id = req.params.id
+        const { password } = req.body
+        const student = await Student.findOne({ _id: id }).select('+password')
+        if (await bcrypt.compare(password, student.password)) {
+            res.send('success')
+        } else {
+            res.status(403).send('error')
+        }
+    },
 }
