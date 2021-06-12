@@ -58,8 +58,8 @@
                      :http-request="httpRequest"
                      class="cover-uploader"
                      :show-file-list="false"
-                     :on-success="handleAvatarSuccess"
-                     :before-upload="beforeAvatarUpload">
+                     :on-success="handleCoverSuccess"
+                     :before-upload="beforeCoverUpload">
             <img v-if="addForm.courseImage"
                  :src="addForm.courseImage"
                  class="cover">
@@ -129,8 +129,8 @@
                      :http-request="httpRequestUpdate"
                      class="cover-uploader"
                      :show-file-list="false"
-                     :on-success="handleAvatarSuccess"
-                     :before-upload="beforeAvatarUpload">
+                     :on-success="handleCoverSuccess"
+                     :before-upload="beforeCoverUpload">
             <img v-if="updateForm.courseImage"
                  :src="updateForm.courseImage"
                  class="cover">
@@ -286,10 +286,10 @@ export default {
           this.$message.error("上传失败");
         });
     },
-    handleAvatarSuccess(res, file) {
+    handleCoverSuccess(res, file) {
       // this.addForm.courseImage = URL.createObjectURL(file.raw);
     },
-    beforeAvatarUpload(file) {
+    beforeCoverUpload(file) {
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
 

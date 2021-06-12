@@ -63,13 +63,6 @@
               </div>
             </div>
             <div style="margin-top: 10px;">
-              <!-- <router-link :to="{name: 'StudentReport', params: {id: report}}">
-              <el-button type="primary"
-                         plain
-                         :disabled="isExpired">
-                {{isExpired?'已截止':hasReport?'去修改':'去完成'}}
-              </el-button>
-            </router-link> -->
               <el-button v-if="evaluated"
                          type="success"
                          @click="toEvaluate">查看结果</el-button>
